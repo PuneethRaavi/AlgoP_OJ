@@ -1,1 +1,8 @@
-*
+#venv
+OJ/ 
+
+# database file
+db.sqlite3        
+
+#
+.DS_Store
