@@ -4,16 +4,92 @@
   <meta charset="UTF-8">
   <title>User Login</title>
   <style>
-    /* Optional: Style based on message tags */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid ;
+      border-color: #3f51b5;
+      padding-bottom: 20px;
+      /* Add shadow to border */
+      box-shadow: 0 4px 6px -6px #3f51b5;
+      /* Optional: Add text shadow for more depth */
+      text-shadow: 2px 2px 4px rgba(63, 81, 181, 0.2);
+      /* Optional: Add gradient border */
+      border-image: linear-gradient(to right, transparent, #3f51b5, transparent) 1;
+    }
+
+    form {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 17px;
+      color: #333; /* Darker color for better visibility */
+      letter-spacing: 0px;
+      font-family: 'Segoe UI', 'Lucida Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      text-shadow: 0 1px 2px rgba(63, 81, 181, 0.07);
+      transition: color 0.3s;
+      margin-bottom: 6px;
+    }
+
+    label:hover {
+      color: #3f51b5; /* Accent color on hover */
+    }
+
+    input {
+      padding: 12px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #3f51b5;
+      outline: none;
+      box-shadow: 0 0 4px rgba(63, 81, 181, 0.2);
+    }
+
+    .error-message {
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #d32f2f;
+      font-size: 14px;
+      margin-top: 2px;
+    }
+
     .messages {
       list-style: none;
       padding: 0;
+      margin-bottom: 20px;
     }
 
     .messages li {
-      padding: 10px;
+      padding: 12px 15px;
+      border-radius: 6px;
       margin-bottom: 10px;
-      border-radius: 4px;
+      font-size: 16px;
     }
 
     .success {
@@ -35,10 +111,37 @@
       background-color: #d1ecf1;
       color: #0c5460;
     }
+
+    button {
+      padding: 12px 18px;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #303f9f;
+    }
+
+    .link-message {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    a {
+      color: #3f51b5;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <h2>Log In</h2>
 
   {% if messages %}
     <ul class="messages">
@@ -52,18 +155,28 @@
     {% csrf_token %}
 
     {% for field in form %}
-      <div>
-        {{ field.label_tag }} {{ field }}
-        {% for error in field.errors %}
-          <div class="error">{{ error }}</div>
-        {% endfor %}
+      {% if forloop.first %}
+        <div class="form-group">
+          <h2>Log In</h2>
+        </div>
+      {% endif %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+          <span class="error-message">{{ field.errors.0 }}</span>
+        {% endif %}
       </div>
     {% endfor %}
-    {{ form.non_field_errors }}
+    {% if form.non_field_errors %}
+      <div class="error">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
 
     <button type="submit">Login</button>
   </form>
 
-  <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+  <div class="link-message">
+    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+  </div>
 </body>
 </html>
