@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home Page</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+
+  <style>
+    .success { color: green; }
+    .error, .warning { color: red; }
+    .info { color: blue; }
+  </style>
+</head>
+<body>
+  <h1>Home Page</h1>
+
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if first_name and last_name %}
+    <p>Hello, {{ first_name }} {{ last_name }}.</p>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+
+  {% else %}
+    <p>Hello, welcome! No user registered yet.</p>
+    <a href="{% url 'login' %}">Login</a>
+  {% endif %}
+</body>
+</html>

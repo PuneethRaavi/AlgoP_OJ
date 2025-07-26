@@ -1,6 +1,7 @@
 from django.contrib import admin
-from signup.models import user_registrations
-from signup.forms import UserRegistrationForm
+from authentication.models import user_registrations
+from authentication.forms import UserRegistrationForm
+
 # Register your models here.
 class UserRegistrationAdmin(admin.ModelAdmin):
     form = UserRegistrationForm

@@ -1,7 +1,0 @@
-# Python cache files
-__pycache__/
-
-#empty files
-__init__.Py
-apps.py
-tests.py

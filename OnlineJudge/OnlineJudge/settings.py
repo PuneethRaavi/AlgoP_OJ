@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'testfeature', # Custom app for user logs
-    'signup'  # Custom app for user registrations
+    'authentication'  # Custom app for user register/login
 ]
 
 MIDDLEWARE = [
@@ -123,3 +122,19 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Session Settings
+
+# Session expires when browser is closed
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Session will expire in 1 hour (3600 seconds)
+SESSION_COOKIE_AGE = 3600   
+
+# Session cookie settings (secure in production)
+SESSION_COOKIE_HTTPONLY = True  # Prevents JS from accessing the session cookie
+SESSION_COOKIE_SECURE = False   # Set to True in production (for HTTPS)
+
+# # Optional: Save the session to DB on every request
+# # Useful if you want to update session expiry on activity
+# SESSION_SAVE_EVERY_REQUEST = True

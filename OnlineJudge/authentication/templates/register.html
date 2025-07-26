@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <style>
+    /* Optional: Style based on message tags */
+    .messages {
+      list-style: none;
+      padding: 0;
+    }
+
+    .messages li {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .warning {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+  </style>
+</head>
+<body>
+  <h2>Register</h2>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+
+  <form method="post">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div>
+        {{ field.label_tag }} {{ field }}
+        {% for error in field.errors %}
+          <div class="error">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    {{ form.non_field_errors }}
+
+    <button type="submit">Register</button>
+  </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
+</body>
+</html>
