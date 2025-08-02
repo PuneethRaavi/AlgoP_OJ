@@ -4,66 +4,12 @@
   <meta charset="UTF-8" />
   <title>Dashboard</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #e9ecef;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 700px;
-      margin: 100px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    .messages {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 20px;
-    }
-
-    .messages li {
-      padding: 10px;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    .success { background: #d4edda; color: #155724; }
-    .error, .warning { background: #f8d7da; color: #721c24; }
-    .info { background: #d1ecf1; color: #0c5460; }
-
-    button {
-      padding: 10px 20px;
-      background: #dc3545;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #c82333;
-    }
-
-    a {
-      color: #007bff;
-      text-decoration: none;
-    }
-  </style>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'authentication/authentication.css' %}">
+  <link rel="stylesheet" href="{% static 'authentication/dashboard.css' %}">
 </head>
 <body>
-  <div class="container">
+  <div class="dashboard-container">
     <h1>Dashboard</h1>
 
     {% if messages %}

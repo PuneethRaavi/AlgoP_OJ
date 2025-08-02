@@ -1,0 +1,37 @@
+/* Overriding and specific styles for the registration page */
+
+h2 {
+  border-color: #c24e55;
+  box-shadow: 0 4px 6px -6px #c24e55;
+  border-image: linear-gradient(to right, transparent, #c24e55, transparent) 1;
+}
+
+label {
+  letter-spacing: -1px;
+}
+
+label:hover {
+  color: #c24e55;
+}
+
+input:focus {
+  border-color: #c24e55;
+  outline: none;
+  box-shadow: 0 0 4px rgba(63, 81, 181, 0.2);
+}
+
+button {
+  background-color: #c3686e;
+}
+
+button:hover {
+  background-color: #c54952;
+}
+
+.link-message a {
+  color: #d44700;
+}
+
+.link-message a:hover {
+  text-decoration: underline;
+}

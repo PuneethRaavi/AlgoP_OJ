@@ -1,0 +1,51 @@
+/* Overriding and specific styles for the login page */
+
+h2 {
+  border-color: #3f51b5;
+  box-shadow: 0 4px 6px -6px #3f51b5;
+  border-image: linear-gradient(to right, transparent, #3f51b5, transparent) 1;
+}
+
+label:hover {
+  color: #3f51b5;
+}
+
+input:focus {
+  border-color: #3f51b5;
+  outline: none;
+  box-shadow: 0 0 4px rgba(63, 81, 181, 0.2);
+}
+
+button {
+  background-color: #3f51b5;
+}
+
+button:hover {
+  background-color: #303f9f;
+}
+
+.forgot-link {
+  font-size: 13px;
+  display: block;
+  margin: 5px 0 0px 0;
+  color: #3f51b5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  text-align: right;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  color: #303f9f;
+  text-align: right;
+}
+
+.link-message a {
+  color: #3f51b5;
+}
+
+.link-message a:hover {
+  text-decoration: underline;
+}
+

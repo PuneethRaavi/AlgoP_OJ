@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from authentication.forms import UserRegistrationForm, UserLoginForm
+from authentication.forms import UserRegistrationForm, UserLoginForm, UserForgetPasswordForm
 from authentication.models import user_registrations
 from django.contrib import messages
 from django.db import IntegrityError
@@ -45,6 +45,7 @@ def register_view(request):
 
     return render(request, 'register.html', {'form': form})
 
+
 def login_view(request):
     if request.method == "POST":
         form = UserLoginForm(request.POST)
@@ -62,6 +63,22 @@ def login_view(request):
 
     return render(request, "login.html", {"form": form})
 
+
+def forget_password_view(request):
+    if request.method == 'POST':
+        form = UserForgetPasswordForm(request.POST)
+        if form.is_valid():
+           form.save() #database violatation will be handled by form validation
+           messages.success(request, "You've successfully changed password. Please log in to continue.")
+           return redirect('/login/')
+        # else:
+        #    #inbuilt - form with validation errors will be displayed in the template
+    else:
+        form = UserForgetPasswordForm()
+
+    return render(request, 'forgetpassword.html', {'form': form})
+
+    
 def logout_view(request):
     request.session.flush()  # Clears the session data
     messages.success(request, "You've been logged out successfully.")
