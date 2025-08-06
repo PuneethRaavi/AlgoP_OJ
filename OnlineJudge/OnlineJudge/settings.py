@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'social_django',  # For social authentication
     'authentication'  # Custom app for user register/login
 ]
 
@@ -48,6 +50,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',  # For social auth error handling
 ]
 
 ROOT_URLCONF = 'OnlineJudge.urls'
@@ -63,6 +67,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'social_django.context_processors.backends',  # For social auth
+                'social_django.context_processors.login_redirect',  # For social auth
             ],
         },
     },
@@ -80,6 +87,14 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+#Authentication backends (for social auth)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'social_core.backends.google.GoogleOAuth2',  # Google OAuth2 backend
+)
 
 
 # Password validation
@@ -138,3 +153,32 @@ SESSION_COOKIE_SECURE = False   # Set to True in production (for HTTPS)
 # # Optional: Save the session to DB on every request
 # # Useful if you want to update session expiry on activity
 # SESSION_SAVE_EVERY_REQUEST = True
+
+
+# GOOGLE OAUTH KEYS  
+
+import os #when production or dockerized, set these as environment variables
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID') #or set directly as a string
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') # or set directly as a string
+
+# Optional: restrict to a few email domains or add a pipeline
+# SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['example.com']
+
+# Optional: custom pipeline to restrict emails manually
+# SOCIAL_AUTH_PIPELINE = (
+#     'social_core.pipeline.social_auth.social_details',
+#     'social_core.pipeline.social_auth.social_uid',
+#     'social_core.pipeline.social_auth.auth_allowed',
+#     'social_core.pipeline.social_auth.social_user',
+#     'social_core.pipeline.user.get_username',
+#     'social_core.pipeline.user.create_user',
+#     'authentication.pipeline.restrict_email',  # Custom restriction
+#     'social_core.pipeline.social_auth.associate_user',
+#     'social_core.pipeline.social_auth.load_extra_data',
+#     'social_core.pipeline.user.user_details',
+# )
+
+# LOGIN CONFIG 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/dashboard/'    # After successful login
+LOGOUT_REDIRECT_URL = '/login/'       # After logout
