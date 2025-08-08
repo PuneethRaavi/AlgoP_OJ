@@ -6,6 +6,9 @@ from django.db import IntegrityError
 # from django.views.decorators.csrf import csrf_exempt #test attack
 
 # Create your views here.
+def home_view(request):
+    return render(request, 'homepage.html')
+
 def dashboard_view(request):
     user_id = request.session.get('ID')
     user = None
