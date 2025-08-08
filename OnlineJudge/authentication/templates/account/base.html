@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Online Judge{% endblock %}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="{% static 'authentication/authentication.css' %}">
+    {% block head_styles %}{% endblock %}
+    
+    <style>
+      .google-btn {
+        display: inline-block;
+        background: #4285F4;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 24px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-top: 20px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25);
+        transition: background-color .3s, box-shadow .3s;
+      }
+      .google-btn:hover {
+        box-shadow: 0 0 6px #4285F4;
+      }
+      .google-btn:active {
+        background: #3367D6;
+      }
+    </style>
+</head>
+<body>
+    <div class="messages-container">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+    {% block content %}{% endblock %}
+</body>
+</html>

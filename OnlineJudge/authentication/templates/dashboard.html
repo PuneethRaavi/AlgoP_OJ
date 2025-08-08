@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   {% load static %}
   <link rel="stylesheet" href="{% static 'authentication/authentication.css' %}">
   <link rel="stylesheet" href="{% static 'authentication/dashboard.css' %}">
@@ -20,15 +19,16 @@
       </ul>
     {% endif %}
 
-    {% if first_name and last_name %}
-      <p>Hello, <strong>{{ first_name }} {{ last_name }}</strong>.</p>
-      <form method="post" action="{% url 'logout' %}">
+    {% if user.is_authenticated %}
+      <p>Hello, <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }}).</p>
+      <p>You have successfully logged in!</p>
+      <form method="post" action="{% url 'account_logout' %}">
         {% csrf_token %}
         <button type="submit">Logout</button>
       </form>
     {% else %}
-      <p>Hello, welcome! No user registered yet.</p>
-      <a href="{% url 'login' %}">Login</a>
+      <p>You are not logged in.</p>
+      <a href="{% url 'account_login' %}">Login</a>
     {% endif %}
   </div>
 </body>

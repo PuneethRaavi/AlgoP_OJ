@@ -1,0 +1,31 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block head_styles %}
+    <link rel="stylesheet" href="{% static 'authentication/register.css' %}">
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    <h2>Register</h2>
+
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+            <span class="error-message">{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    
+    <button type="submit">Register</button>
+
+    <div class="link-message">
+        <p>Already have an account? <a href="{% url 'account_login' %}">Login here</a></p>
+    </div>
+</form>
+{% endblock %}
