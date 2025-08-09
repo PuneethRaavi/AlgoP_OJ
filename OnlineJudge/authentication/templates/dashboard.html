@@ -27,8 +27,11 @@
         <button type="submit">Logout</button>
       </form>
     {% else %}
-      <p>Hello, welcome! No user registered yet.</p>
-      <a href="{% url 'login' %}">Login</a>
+      <p>Hello, <strong>{{ username }}</strong>.</p>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
     {% endif %}
   </div>
 </body>

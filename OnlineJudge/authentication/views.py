@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from authentication.forms import UserRegistrationForm, UserLoginForm, UserForgetPasswordForm
-from authentication.models import user_registrations
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from authentication.forms import UserRegistrationForm, UserLoginForm
 from django.contrib import messages
 from django.db import IntegrityError
 # from django.views.decorators.csrf import csrf_exempt #test attack
@@ -9,22 +10,13 @@ from django.db import IntegrityError
 def home_view(request):
     return render(request, 'homepage.html')
 
+@login_required
 def dashboard_view(request):
-    user_id = request.session.get('ID')
-    user = None
-    if user_id:
-        try:
-            user = user_registrations.objects.get(id=user_id)
-        except user_registrations.DoesNotExist:
-            messages.warning(request, "User not found. Please register again.")#user deleted in db
-            return redirect('/register/')
-    else:
-        messages.warning(request, "Session expired or login missing. Please login again.")
-        return redirect('/login/')
-    
+    user = request.user
     context = {
         'first_name': user.first_name,
-        'last_name': user.last_name
+        'last_name': user.last_name,
+        'username': user.username,
     }
     return render(request, 'dashboard.html', context)  # automatically handles template and context without loader and httpresponse 
 
@@ -51,38 +43,34 @@ def register_view(request):
 
 def login_view(request):
     if request.method == "POST":
-        form = UserLoginForm(request.POST)
+        form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
-            user = form.user  # retrieved in form's clean()
-            # log the user in manually or with session
-            request.session['ID'] = user.id
-            if request.session.get('ID') != user.id:
-                messages.error(request, "Session error: Could not log you in. Please try again.")
-                return redirect('/login/')
-            messages.success(request, "You've successfully logged in to online judge and learning going slow XD.")
-            return redirect("/dashboard/")
+            user = form.get_user()  
+            login(request, user) # ✨ Use Django's login function
+            messages.success(request, "You've successfully logged in.")
+            return redirect("/dashboard/") #customise to redirect to request site
     else:
         form = UserLoginForm()
 
     return render(request, "login.html", {"form": form})
 
 
-def forget_password_view(request):
-    if request.method == 'POST':
-        form = UserForgetPasswordForm(request.POST)
-        if form.is_valid():
-           form.save() #database violatation will be handled by form validation
-           messages.success(request, "You've successfully changed password. Please log in to continue.")
-           return redirect('/login/')
-        # else:
-        #    #inbuilt - form with validation errors will be displayed in the template
-    else:
-        form = UserForgetPasswordForm()
+# def forget_password_view(request):
+#     if request.method == 'POST':
+#         form = UserForgetPasswordForm(request.POST)
+#         if form.is_valid():
+#            form.save() #database violatation will be handled by form validation
+#            messages.success(request, "You've successfully changed password. Please log in to continue.")
+#            return redirect('/login/')
+#         # else:
+#         #    #inbuilt - form with validation errors will be displayed in the template
+#     else:
+#         form = UserForgetPasswordForm()
 
-    return render(request, 'forgetpassword.html', {'form': form})
+#     return render(request, 'forgetpassword.html', {'form': form})
 
     
 def logout_view(request):
-    request.session.flush()  # Clears the session data
+    logout(request) 
     messages.success(request, "You've been logged out successfully.")
     return redirect('/login/')
