@@ -3,24 +3,16 @@ from authentication.forms import UserRegistrationForm, UserLoginForm, UserForget
 from authentication.models import user_registrations
 from django.contrib import messages
 from django.db import IntegrityError
+from authentication.decorators import session_required
 # from django.views.decorators.csrf import csrf_exempt #test attack
 
 # Create your views here.
 def home_view(request):
     return render(request, 'homepage.html')
 
+@session_required  # Ensures user is logged in before accessing dashboard
 def dashboard_view(request):
-    user_id = request.session.get('ID')
-    user = None
-    if user_id:
-        try:
-            user = user_registrations.objects.get(id=user_id)
-        except user_registrations.DoesNotExist:
-            messages.warning(request, "User not found. Please register again.")#user deleted in db
-            return redirect('/register/')
-    else:
-        messages.warning(request, "Session expired or login missing. Please login again.")
-        return redirect('/login/')
+    user = request.custom_user
     
     context = {
         'first_name': user.first_name,
