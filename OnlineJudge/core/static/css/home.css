@@ -1,0 +1,42 @@
+/* --- Feature Card Styles (Compiler, Problems, etc.) --- */
+.feature-card {
+    /* Initial state for the hover transition */
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.feature-card:hover {
+    /* Lifts the card up slightly on hover for a 3D effect */
+    transform: translateY(-10px);
+}
+
+/* --- Icon Background Styles within Feature Cards --- */
+.icon-bg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    width: 64px;
+    border-radius: 16px; /* more rounded corners */
+}
+
+/* --- Supported Languages Section Styles --- */
+.language-item {
+    /* Base styles for the language boxes */
+    transition: all 0.3s ease;
+    border: 1px solid transparent; /* Start with a transparent border */
+}
+
+.language-item:hover {
+    /* This applies the transform, border, and shadow to both light and dark modes */
+    transform: scale(1.05);
+    border-color: #e2e8f0; /* slate-200 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark mode styles for language items */
+html.dark .language-item:hover {
+    /* Hover effect for language boxes in dark mode */
+    border-color: #4b5563; /* gray-600 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,8 @@
+# Python cache files
+__pycache__/
+
+# Empty files
+__init__.Py
+tests.py
+models.py
+admin.py

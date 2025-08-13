@@ -1,48 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>User Registration</title>
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'authentication/authentication.css' %}">
-  <link rel="stylesheet" href="{% static 'authentication/register.css' %}">
-</head>
-<body>
+{% extends 'auth_base.html' %}
+{% load static %}
 
-  {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+{% block title %}Register - OnlineJudge{% endblock %}
 
-  <form method="post">
-    {% csrf_token %}
+{% block content %}
+<div class="max-w-md mx-auto">
 
-    {% for field in form %}
-      {% if forloop.first %}
-        <div class="form-group">
-          <h2>Register</h2>
-        </div>
-      {% endif %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.errors %}
-          <span class="error-message">{{ field.errors.0 }}</span>
-        {% endif %}
-      </div>
-    {% endfor %}
-    {% if form.non_field_errors %}
-      <div class="error">{{ form.non_field_errors.0 }}</div>
+    <!-- Messages Block -->
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+            <div class="p-4 rounded-md 
+                {% if message.tags == 'success' %} bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 {% endif %}
+                {% if message.tags == 'error' %} bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 {% endif %}
+                {% if message.tags == 'warning' %} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
-    <button type="submit">Register</button>
-  </form>
+    <!-- Register Form Card  -->
+    <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-lg rounded-xl shadow-md hover:shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-shadow duration-300">
+        <form method="post" class="p-8 space-y-6">
+            {% csrf_token %}
+            
+            <!-- Heading -->
+            <div class="text-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Create an Account</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Join our community of problem solvers</p>
+            </div>
+            
+            {% if form.non_field_errors %}
+                <div class="p-3 bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 rounded-md text-sm">{{ form.non_field_errors.0 }}</div>
+            {% endif %}
 
-  <div class="link-message">
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
-  </div>
-</body>
-</html>
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                        <span class="text-red-500">*</span>
+                    {% endif %}
+                </label>
+                {{ field }}
+
+                {% if field.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300">
+                    Register
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        Already have an account?
+        <a href="{% url 'login' %}" class="font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300">
+            Log in here
+        </a>
+    </p>
+</div>
+{% endblock %}

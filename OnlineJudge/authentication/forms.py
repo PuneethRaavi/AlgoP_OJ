@@ -6,11 +6,29 @@ import re
 class UserRegistrationForm(forms.ModelForm):
     class Meta:
         model = user_registrations
-        fields = ['first_name', 'last_name', 'email', 'username', 'password']
-        widgets = {
-            'password': forms.PasswordInput()
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        
+        # Define common widget attributes for styling
+        form_attrs = {
+            'class': 'mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm'
         }
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+        password_attrs = form_attrs.copy()
+        password_attrs['placeholder'] = '8+ characters with a number & symbol'
+        
+        widgets = {
+            'username': forms.TextInput(attrs=form_attrs),
+            'first_name': forms.TextInput(attrs=form_attrs),
+            'last_name': forms.TextInput(attrs=form_attrs),
+            'email': forms.EmailInput(attrs=form_attrs),
+            'password': forms.PasswordInput(attrs=password_attrs),
+        }
+
+    confirm_password_attrs = Meta.form_attrs.copy()
+    confirm_password_attrs['placeholder'] = 'Re-enter password to confirm'
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs=confirm_password_attrs), 
+        label="Confirm Password"
+    )
     
     def clean_password(self):
         password = self.cleaned_data.get("password")
@@ -34,7 +52,6 @@ class UserRegistrationForm(forms.ModelForm):
             self.add_error('confirm_password', "Passwords do not match.")
 
         return cleaned_data
-
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -78,7 +95,6 @@ class UserLoginForm(forms.Form):
         # If username does not exist, skip password validation
         if self.errors:
             return cleaned_data
-
         user = getattr(self, 'user', None)
 
         if user and not check_password(password, user.password):
@@ -88,21 +104,21 @@ class UserLoginForm(forms.Form):
     
     
 class UserForgetPasswordForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput, label= "New Password")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm New Password")
+    email = forms.CharField()
+    # password = forms.CharField(widget=forms.PasswordInput, label= "New Password")
+    # confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm New Password")
 
-    def clean_username(self):
-        username = self.cleaned_data.get("username")
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
 
-        if not username:
-            raise forms.ValidationError("Username is required.")
+        if not email:
+            raise forms.ValidationError("Email is required.")
         try:
-            self.user = user_registrations.objects.get(username=username)
+            self.user = user_registrations.objects.get(email=email)
         except user_registrations.DoesNotExist:
-            raise forms.ValidationError("Invalid username. Register first")
+            raise forms.ValidationError("Invalid Email ID. Register first")
 
-        return username
+        return email
 
     def clean_password(self):
         password = self.cleaned_data.get("password")
@@ -139,5 +155,3 @@ class UserForgetPasswordForm(forms.Form):
     def save(self):
         self.user.password = make_password(self.cleaned_data['password'])  
         self.user.save()
-
-    

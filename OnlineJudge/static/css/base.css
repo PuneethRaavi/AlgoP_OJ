@@ -1,0 +1,62 @@
+/* --- Base Body Styles --- */
+body {
+    /* Sets the default font for the entire site */
+    font-family: 'Inter', sans-serif;
+    
+    /* --- Light Mode Background --- */
+    /* Fallback color in case gradients aren't supported */
+    background-color: #f8fafc; /* Tailwind's 'slate-50' */
+
+    /* A subtle grid pattern using CSS gradients */
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: center center;
+}
+
+/* --- Base Navigation Bar Styles --- */
+nav {
+    /* A transparent white background for a glassy effect */
+    background-color: rgba(255, 255, 255, 0.75); 
+    /* Blurs the content behind the navbar */
+    backdrop-filter: blur(10px);
+    /* A light gray border at the bottom of the navbar */
+    border-bottom: 1px solid #e5e7eb; 
+    /* A subtle shadow to lift the navbar off the page */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Dark Mode Styles --- */
+html.dark body {
+    /* --- Dark Mode Background --- */
+    background-color: #111827; /* Tailwind's 'gray-900' */
+    /* An inverted, light-colored grid pattern for dark mode */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+html.dark nav {
+    /* A transparent dark gray background for the navbar in dark mode */
+    background-color: rgba(17, 24, 39, 0.75); 
+    /* A darker gray border for the navbar in dark mode */
+    border-bottom: 1px solid #374151; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Shows the Toggle */
+#copy-alert.show {
+    opacity: 0.9;
+    pointer-events: auto;
+}
+
+/* --- Smooth Theme Transition --- */
+.theme-transition * {
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                fill 0.2s ease,
+                stroke 0.2s ease;
+}

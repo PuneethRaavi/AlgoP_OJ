@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - OnlineJudge{% endblock %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+
+    <!-- Hero Section -->
+    <header class="text-center mb-24">
+        <h1 
+            class="text-5xl md:text-6xl font-extrabold mb-4
+                bg-gradient-to-r from-emerald-600 via-sky-600 to-purple-600 bg-clip-text text-transparent
+                dark:from-emerald-300 dark:via-sky-200 dark:to-purple-300 dark:opacity-90
+                transition-all duration-500 ease-in-out"
+            style="line-height: 1.25; padding-bottom: 0.2em;"
+        >
+            <span class="dark:[text-shadow:_0_0_6px_rgba(255,255,255,0.2)]">
+                Welcome to OnlineJudge
+            </span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Your all-in-one space to write, run, and perfect your code — solve exciting problems, 
+            track your progress, connect with fellow coders, and most importantly, have fun building. :)
+        </p>
+    </header>
+
+
+    <!-- Features Section -->
+    <section class="mb-24">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Feature 1: Compiler -->
+            <a href="{% url 'wip' %}" class="block">
+                <div class="feature-card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full">
+                    <div class="icon-bg bg-blue-100 dark:bg-blue-900/50">
+                        <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-6 mb-2">Live Compiler</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Instantly test your code snippets in multiple languages. Our fast and reliable compiler gives you immediate feedback.
+                    </p>
+                </div>
+            </a>
+            <!-- Feature 2: Problems -->
+            <a href="{% url 'problems' %}" class="block">
+                <div class="feature-card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full">
+                    <div class="icon-bg bg-green-100 dark:bg-green-900/50">
+                        <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-6 mb-2">Solve Problems</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Challenge yourself with a curated collection of algorithmic problems ranging from easy to hard.
+                    </p>
+                </div>
+            </a>
+            <!-- Feature 3: Contribute -->
+            <a href="{% url 'wip' %}" class="block">
+                <div class="feature-card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full">
+                    <div class="icon-bg bg-purple-100 dark:bg-purple-900/50">
+                        <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-6 mb-2">Upload Problems</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Contribute to the community by creating and uploading your own problems. Subject to admin approval.
+                    </p>
+                </div>
+            </a>
+            <!-- Feature 4: Contests -->
+            <a href="{% url 'wip' %}" class="block">
+                <div class="feature-card bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full">
+                    <div class="icon-bg bg-yellow-100 dark:bg-yellow-900/50">
+                         <!-- SVG Icon for trophy/contest -->
+                        <svg class="w-8 h-8 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-6 mb-2">Compete</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Test your skills against others in timed coding contests. Climb the ranks and earn bragging rights.
+                    </p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Supported Languages Section -->
+    <section class="mb-24">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-800 dark:text-white">Supported Languages</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 mt-2">We're constantly updating our supported languages and versions.</p>
+        </div>
+        <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="language-item p-4 bg-stone-100 hover:bg-sky-200 dark:bg-gray-800 dark:hover:bg-sky-900 rounded-lg">
+                <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-200">Python</h4>
+                <p class="text-gray-500 dark:text-gray-400">3.9 / 3.10 / 3.11</p>
+            </div>
+            <div class="language-item p-4 bg-stone-200 hover:bg-indigo-200 dark:bg-gray-800 dark:hover:bg-indigo-900 rounded-lg">
+                <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-200">C++</h4>
+                <p class="text-gray-500 dark:text-gray-400">C++17 / C++20</p>
+            </div>
+            <div class="language-item p-4 bg-stone-100 hover:bg-red-200 dark:bg-gray-800 dark:hover:bg-red-900 rounded-lg">
+                <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-200">Java</h4>
+                <p class="text-gray-500 dark:text-gray-400">JDK 11 / JDK 17</p>
+            </div>
+            <div class="language-item p-4 bg-stone-200 hover:bg-yellow-200 dark:bg-gray-800 dark:hover:bg-yellow-900 rounded-lg">
+                <h4 class="text-xl font-semibold text-gray-700 dark:text-gray-200">JavaScript</h4>
+                <p class="text-gray-500 dark:text-gray-400">Node.js 18.x</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    {% if not user %}
+    <section class="bg-emerald-700 dark:bg-slate-900 text-white rounded-xl shadow-xl">
+        <div class="container mx-auto px-6 py-12 text-center">
+            <h2 class="text-3xl font-extrabold text-white mb-2">Ready to Get Started?</h2>
+            <p class="text-green-100 dark:text-slate-200 text-lg mb-8 max-w-2xl mx-auto">
+            Create an account or log in to track your submissions, see your progress, and start contributing.
+            </p>
+            <div class="flex justify-center space-x-4">
+            <a href="{% url 'register' %}" 
+                class="bg-amber-50 text-emerald-800 hover:bg-slate-400 dark:bg-zinc-600 dark:text-stone-200 dark:hover:bg-zinc-900 font-bold py-3 px-6 rounded-lg transition duration-300 text-lg shadow-sm">
+                Register
+            </a>
+            <a href="{% url 'login' %}" 
+                class="bg-emerald-900 hover:bg-emerald-800 dark:bg-rose-950 dark:hover:bg-rose-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 text-lg shadow-md">
+                Login
+            </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}

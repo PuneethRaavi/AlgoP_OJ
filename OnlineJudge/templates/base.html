@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OnlineJudge{% endblock %}</title>
+    
+    <!-- Common Stylesheets and Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script> tailwind.config = {darkMode: 'class',}</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <!-- Block for extra, page-specific CSS -->
+    {% block head_extra %}{% endblock %}
+    
+</head>
+<body class="text-gray-800 dark:text-gray-200">
+
+    <nav class="backdrop-blur-lg shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Left side: Brand and main navigation -->
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-rose-800 dark:hover:text-rose-800">OnlineJudge</a>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Compiler</a>
+                        <a href="{% url 'problems' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Problems</a>
+                        {% if user %}
+                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Submissions</a>
+                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Contests</a>
+                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Leaderboard</a>
+                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Upload</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Right side: User authentication -->
+                <div class="flex items-center">
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle" type="button" class="p-1 mr-3 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-indigo-800 transition-colors duration-200">
+                        <span class="sr-only">Toggle theme</span>
+                        <!-- Moon Icon -->
+                        <svg id="theme-toggle-dark-icon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        <!-- Sun Icon -->
+                        <svg id="theme-toggle-light-icon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    </button>
+
+                    {% if user %}
+                        <span class="text-gray-600 dark:text-gray-300 hidden sm:block">Welcome, <span class="font-semibold text-indigo-600 dark:text-indigo-400">{{ user.username }}</span></span>
+                        <a href="{% url 'logout' %}" class="ml-6 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-800/50 dark:text-red-300 dark:hover:bg-red-800/80 font-bold py-2 px-4 rounded-lg transition duration-300 text-sm">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="bg-sky-100 text-sky-700 hover:bg-sky-600 dark:bg-transparent dark:border dark:border-sky-400 dark:text-sky-400 dark:hover:bg-sky-400 dark:hover:text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 text-sm">
+                            Login
+                        </a>
+
+                        <a href="{% url 'register' %}" class="ml-4 bg-green-100 text-green-700 hover:bg-green-200 dark:bg-transparent dark:border dark:border-green-400 dark:text-green-400 dark:hover:bg-green-400 dark:hover:text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 text-sm">
+                            Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="w-full mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Block for extra, page-specific JavaScript -->
+    {% block scripts %}{% endblock %}
+
+    <!-- Common JavaScript file -->
+    <script src="{% static 'js/base.js' %}"></script>
+    
+    <!-- Toast notification -->
+    <div id="copy-alert" 
+        class="fixed top-16 right-5 max-w-xs w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white px-4 py-3 rounded-lg shadow-md opacity-0 pointer-events-none flex items-center space-x-3 transition-opacity duration-300"
+        role="alert" aria-live="assertive" aria-atomic="true">
+
+        <svg class="w-6 h-6 text-teal-500 dark:text-teal-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        <span id="copy-alert-message" class="font-medium"></span>
+    </div>
+</body>
+</html>

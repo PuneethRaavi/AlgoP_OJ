@@ -1,0 +1,49 @@
+.difficulty-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px; /* Creates a pill shape */
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+/* --- Light Mode Styles --- */
+
+/* Style for 'Easy' difficulty */
+.difficulty-Easy {
+    background-color: #dcfce7; /* Tailwind's green-100 */
+    color: #166534;           /* Tailwind's green-800 */
+}
+
+/* Style for 'Medium' difficulty */
+.difficulty-Medium {
+    background-color: #fef9c3; /* Tailwind's yellow-100 */
+    color: #854d0e;           /* Tailwind's yellow-800 */
+}
+
+/* Style for 'Hard' difficulty */
+.difficulty-Hard {
+    background-color: #fee2e2; /* Tailwind's red-100 */
+    color: #991b1b;           /* Tailwind's red-800 */
+}
+
+
+/* --- Dark Mode Styles --- */
+
+/* Dark mode style for 'Easy' difficulty */
+html.dark .difficulty-Easy {
+    background-color: rgba(255, 255, 255, 0.15); /* Transparent green */
+    color: #4ade80; /* Tailwind's green-400 */
+}
+
+/* Dark mode style for 'Medium' difficulty */
+html.dark .difficulty-Medium {
+    background-color: rgba(234, 179, 8, 0.15); /* Transparent yellow */
+    color: #facc15; /* Tailwind's yellow-400 */
+}
+
+/* Dark mode style for 'Hard' difficulty */
+html.dark .difficulty-Hard {
+    background-color: rgba(239, 68, 68, 0.15); /* Transparent red */
+    color: #f87171; /* Tailwind's red-400 */
+}
