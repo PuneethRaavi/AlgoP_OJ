@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Compiler - OnlineJudge{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/monokai.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/eclipse.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/cobalt.min.css" />
+<style>
+    .CodeMirror, #id_input, .output-pre {
+        height: 100%; /* Make editors and pre tags fill their containers */
+        border-radius: 0.375rem;
+        width: 100%;
+        overflow: auto; /* Ensure scrolling is enabled */
+    }
+    #id_input {
+        resize: none; /* Disable user resizing */
+    }
+    .compiler-container {
+        height: 88vh; /* Set a fixed viewport height for the main container */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="compiler-container max-w-full mx-auto -mt-8">
+    <form method="post" novalidate class="h-full w-full">
+        {% csrf_token %}
+        <div class="h-full w-full grid grid-cols-2 bg-white dark:bg-gray-800/50 rounded-xl shadow-md border border-gray-300 dark:border-gray-600 overflow-hidden">
+            
+            <!-- Left Column -->
+            <div class="left-column flex flex-col border-r border-gray-300 dark:border-gray-600">
+                <!-- Code Panel -->
+                <div class="code-panel flex-grow flex flex-col">
+                    <!-- Header for Language/Theme Selectors -->
+                    <div class="flex-shrink-0 p-4 border-b border-gray-300 dark:border-gray-600 bg-stone-100/50 dark:bg-slate-950/30 relative">
+                        <div class="flex flex-wrap gap-x-8 gap-y-2 items-center">
+                            <div class="flex items-center gap-3">
+                                <label for="{{ form.language.id_for_label }}" class="block text-xs font-medium text-gray-600 dark:text-gray-300">Language</label>
+                                {{ form.language }}
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <label for="{{ form.theme.id_for_label }}" class="block text-xs font-medium text-gray-600 dark:text-gray-300">{{ form.theme.label }}</label>
+                                {{ form.theme }}
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            {{ form.fontSize }}
+                        </div>
+                    </div>
+                    <!-- Code Editor -->
+                    <div class="flex-grow p-4 relative">
+                        <div class="absolute inset-4">
+                            {{ form.code }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status and Run Panel -->
+                <div class="status-panel flex-shrink-0 border-t border-gray-300 dark:border-gray-600 bg-stone-100/50 dark:bg-slate-950/30">
+                    <div class="flex items-center justify-between gap-3 p-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[15px] font-semibold text-gray-700 dark:text-gray-300">Status:</span>
+                            <span class="rounded-md text-[15px]
+                                {% if status == 'Accepted' %} text-green-800 dark:text-green-300
+                                {% elif status == 'Pending' or status == 'Running' %} text-yellow-800 dark:text-yellow-300
+                                {% elif not status %} text-amber-700 dark:text-amber-200
+                                {% else %} text-red-800 dark:text-red-300 {% endif %}">
+                                {% if status == 'Accepted' %} Run Successful {% else %} {{ status|default:"Not Executed" }} {% endif %}
+                            </span>
+                        </div>
+                        <button type="submit" name="action" value="run" class="py-1.5 px-5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 dark:bg-cyan-700 dark:hover:bg-cyan-600">
+                            Run
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column flex flex-col">
+                <!-- Output Panel -->
+                <div class="output-panel h-[45%] flex flex-col">
+                    <h3 class="flex-shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300 p-4 border-b border-gray-300 dark:border-gray-600 bg-stone-100/50 dark:bg-slate-950/30">Output</h3>
+                    <div class="flex-grow bg-gray-900 dark:bg-zinc-950 relative rounded-md m-2">
+                        <div class="absolute inset-4">
+                            <pre class="output-pre text-white text-[11px] h-full w-full"><code>{{ output }}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Panel -->
+                <div class="input-panel h-[55%] flex flex-col">
+                    <label for="id_input" class="flex-shrink-0 block text-sm font-semibold text-gray-700 dark:text-gray-300 p-4 border-t border-b border-gray-300 dark:border-gray-600 bg-stone-100/50 dark:bg-slate-950/30">Input</label>
+                    <div class="flex-grow p-4">
+                        <!-- Styling at bottom in script -->
+                         {{ form.input }}  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
+
+<script src="{% static 'js/judge.js' %}"></script>
+<script>
+// Apply styling to the input textarea after the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const inputTextArea = document.getElementById('id_input');
+    if (inputTextArea) {
+        inputTextArea.classList.add('bg-gray-100', 'dark:bg-slate-900', 'p-3', 'rounded-md', 'text-xs', 'text-gray-700', 'dark:text-gray-300', 'border', 'border-gray-300', 'dark:border-gray-600');
+    }
+});
+</script>
+{% endblock %}

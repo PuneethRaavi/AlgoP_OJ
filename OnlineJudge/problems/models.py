@@ -66,10 +66,11 @@ class Questions(models.Model):
     time_limit = models.FloatField(default=1.0, help_text="Time limit in seconds for a solution to run.")
     memory_limit = models.IntegerField(default=256, help_text="Memory limit in megabytes (MB).")
 
-    # # Meta information
-    # author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='authored_problems')
-    # created_at = models.DateTimeField(auto_now_add=True)
-    # updated_at = models.DateTimeField(auto_now=True)
+    # Meta information
+    author = models.ForeignKey(user_registrations, on_delete=models.SET_NULL, null=True, related_name='authored_problems')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
       verbose_name = 'Question'
@@ -97,13 +98,13 @@ class TestCases(models.Model):
 
 class Submissions(models.Model):
 
-    # problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions')
     user = models.ForeignKey(user_registrations, on_delete=models.CASCADE, related_name='submissions')
 
-    language = models.ForeignKey(Languages, on_delete=models.PROTECT, help_text="Language of the submission")
+    language = models.ForeignKey(Languages, on_delete=models.PROTECT, related_name='submissions', help_text="Language of the submission")
+    problem = models.ForeignKey(Questions, on_delete=models.CASCADE, related_name='submissions', help_text="Problem Title")
     filekey = models.CharField(max_length=100, blank=True, help_text="The UUID key for code/input/output files.")
     
-    # Execution results (filled in by the judge)
+    # Execution results (filled in by the judge)  # Not functional as of now
     runtime = models.FloatField(null=True, blank=True, help_text="Execution time in seconds.")
     memory_used = models.IntegerField(null=True, blank=True, help_text="Memory used in megabytes (MB).")
 
@@ -111,7 +112,7 @@ class Submissions(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
         
     def __str__(self):
-        return f"Submission by {self.user.username} in {self.language.name}" #f"Submission by {self.user.username} for '{self.problem.title}' [{self.status}]"
+        return f"{self.user.username} | {self.language.name} | {self.problem.title} [{self.status}] ({self.submitted_at:%Y-%m-%d %H:%M})"
 
     class Meta:
         ordering = ['-submitted_at']

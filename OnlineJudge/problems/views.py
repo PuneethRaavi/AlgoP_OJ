@@ -16,7 +16,7 @@ def run_submit_view(request, problem_id):
 
     submission = None           # DB Object
     status = ""
-    output = " "
+    output = "Output is displayed here."
 
     if request.method == 'POST':
         form = CompilerForm(request.POST)
@@ -28,13 +28,16 @@ def run_submit_view(request, problem_id):
 
             action = request.POST.get('action')
             if action == 'run':
-                _ , output, _ = execute_code(language, code, input, problem, request.user)
+                # Generate a unique prefix for our files
+                filekey = f"user{request.user.id}_problem{problem.id}"
+                _ , output, _ = execute_code(language, code, input, filekey)
             
             elif action == 'submit':
                 status, output, filekey = judge_code(language, code, questionkey)
                 # Save in DB
                 submission = Submissions.objects.create(
                     user=request.user,
+                    problem=problem,
                     language=language,
                     status=status,
                     filekey=filekey
@@ -51,14 +54,11 @@ def run_submit_view(request, problem_id):
         'output': output,
         'sample_tests': sample_tests,
     }
-    if status == "Accepted":
-        context['success_message'] = "Your code was successfully executed!"
-        return render(request, 'success.html', context)
     return render(request, 'judge.html', context)
 
 
 
-def execute_code(language, code, input, problem, user):
+def execute_code(language, code, input, filekey):
 
     # Base submissions directory
     submissions_dir = Path(settings.BASE_DIR) / "submissions"
@@ -66,9 +66,6 @@ def execute_code(language, code, input, problem, user):
     codes_dir = submissions_dir / "codes"
     inputs_dir = submissions_dir / "inputs"
     outputs_dir = submissions_dir / "outputs"
-
-    # Generate a unique prefix for our files
-    filekey = f"user{user.id}_problem{problem.id}"
 
     # Define file paths
     code_file_path = codes_dir / f"{filekey}.{language.extension}"
@@ -118,7 +115,7 @@ def execute_code(language, code, input, problem, user):
         # Run
         with open(input_file_path, "r") as input_f, open(output_file_path, "w") as output_f:
             run = subprocess.run(
-                command, stdin=input_f, stdout=output_f, stderr=subprocess.PIPE, text=True, timeout=5
+                command, stdin=input_f, stdout=output_f, stderr=subprocess.PIPE, text=True, timeout=2
             )
         if run.returncode == 0:
             status = "Accepted"
@@ -223,7 +220,7 @@ def judge_code(language, code, questionkey):
             try:
                 # Execute the code against a single test case
                 run = subprocess.run(
-                    command,input=test_input,capture_output=True,text=True,timeout=time_limit
+                    command,input=test_input,capture_output=True,text=True,timeout=time_limit+1
                 )
                 if run.returncode != 0:
                     status = detect_error(run.stderr, language.extension)

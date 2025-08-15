@@ -1,9 +1,10 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
     <title>{% block title %}OnlineJudge{% endblock %}</title>
     
     <!-- Common Stylesheets and Scripts -->
@@ -28,10 +29,10 @@
                 <div class="flex items-center space-x-8">
                     <a href="/" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-rose-800 dark:hover:text-rose-800">OnlineJudge</a>
                     <div class="hidden md:flex items-center space-x-6">
-                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Compiler</a>
+                        <a href="{% url 'compiler' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Compiler</a>
                         <a href="{% url 'problems' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Problems</a>
                         {% if user %}
-                        <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Submissions</a>
+                        <a href="{% url 'submissions' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Submissions</a>
                         <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Contests</a>
                         <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Leaderboard</a>
                         <a href="{% url 'wip' %}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition duration-300">Upload</a>

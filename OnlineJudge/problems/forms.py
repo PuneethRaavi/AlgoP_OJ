@@ -7,7 +7,7 @@ class CompilerForm(forms.Form):
         queryset=Languages.objects.all(),
         empty_label=None,
         widget=forms.Select(attrs={
-            'class': 'mt-1 block w-full max-w-xs px-2 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300'
+            'class': 'mt-1 block w-full max-w-xs px-1.5 py-1 text-[10px] dark:text-stone-400 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300'
         }),
         label="Language",
     )
@@ -21,9 +21,22 @@ class CompilerForm(forms.Form):
             ('eclipse', 'Eclipse'),
         ],
         widget=forms.Select(attrs={
-            'class': 'mt-1 block w-full max-w-xs px-2 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300'        
+            'class': 'mt-1 block w-full max-w-xs px-1.5 py-1 text-[10px] dark:text-stone-400 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300'        
         }),
         label="Theme",
+    )
+
+    fontSize = forms.ChoiceField(
+        choices=[
+            ('8px' , '8px' ),
+            ('10px', '10px'),
+            ('12px', '12px'),
+            ('14px', '14px'),
+        ],
+        widget=forms.Select(attrs={
+            'class': 'appearance-none block w-full max-w-xs px-1 py-1 text-[9px] dark:text-stone-400 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300'
+        }),
+        initial='12px' 
     )
 
     code = forms.CharField(
@@ -36,7 +49,7 @@ class CompilerForm(forms.Form):
 
     input = forms.CharField(
         widget=forms.Textarea(attrs={
-            'rows': 2,
+            'rows': 5,
             'placeholder': 'Provide input for your code here...'
         }),
         required=False,
@@ -60,3 +73,6 @@ class QuestionAdminForm(forms.ModelForm):
     class Meta:
         model = Questions
         fields = '__all__' # Include all fields from the Questions model
+
+
+#Question upload form, multiple sample cases upload issue as of now- getting complex

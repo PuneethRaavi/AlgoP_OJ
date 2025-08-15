@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
   const codeTextArea = document.getElementById('id_code');
   const languageSelect = document.getElementById('id_language');
+  const themeSelect = document.getElementById('id_theme');
+  const fontSizeSelect = document.getElementById('id_fontSize'); // Get the new font size selector
   const inputField = document.getElementById('id_input') || document.querySelector('textarea[name="input"], input[name="input"]');
 
   if (!codeTextArea || !languageSelect) {
@@ -62,8 +64,30 @@ document.addEventListener('DOMContentLoaded', function() {
     indentWithTabs: false
   });
 
-  // theme selector hooks (if present)
-  const themeSelect = document.getElementById('id_theme');
+  // --- NEW FONT SIZE LOGIC ---
+  const editorWrapper = editor.getWrapperElement(); // This is the .CodeMirror element
+  if (fontSizeSelect && editorWrapper) {
+      // Function to apply the font size
+      const applyFontSize = (size) => {
+          editorWrapper.style.fontSize = size;
+          localStorage.setItem('codeMirrorFontSize', size);
+          editor.refresh(); // Redraw the editor to adjust for new size
+      };
+
+      // Set initial font size from localStorage or the dropdown's default value
+      const savedSize = localStorage.getItem('codeMirrorFontSize') || fontSizeSelect.value;
+      fontSizeSelect.value = savedSize;
+      applyFontSize(savedSize);
+
+      // Add event listener for changes
+      fontSizeSelect.addEventListener('change', () => {
+          applyFontSize(fontSizeSelect.value);
+      });
+  }
+  // --- END NEW FONT SIZE LOGIC ---
+
+
+  // Theme Selector
   if (themeSelect) {
     themeSelect.value = localStorage.getItem('codeMirrorTheme') || themeSelect.value;
     themeSelect.addEventListener('change', () => {

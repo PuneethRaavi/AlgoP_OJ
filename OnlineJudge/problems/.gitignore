@@ -4,6 +4,3 @@ __pycache__/
 # Empty files
 __init__.Py
 tests.py
-
-#Test Cases
-testcases/

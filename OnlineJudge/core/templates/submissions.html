@@ -1,99 +1,68 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Submissions - OnlineJudge{% endblock %}
+{% block title %}My Submissions - OnlineJudge{% endblock %}
+
+{% block head_extra %}
+<!-- Using a similar CSS file if you have one for this style -->
+<link rel="stylesheet" href="{% static 'css/problems.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
-
-    <!-- Welcome Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Your Submissions</h1>
-        <p class="mt-1 text-lg text-gray-600">Here is a summary of your recent activity.</p>
-    </div>
-
-    <!-- Main Content Card -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-        <div class="px-6 py-5 border-b border-gray-200">
-            <h2 class="text-xl font-bold text-gray-900">Submission History</h2>
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-lg rounded-xl shadow-md hover:shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-shadow duration-300">
+        
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Submissions</h1>
         </div>
+
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-800">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Problem</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Language</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16">#</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Title</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Difficulty</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Language</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Submitted</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    
-                    <!-- Example Row: You will loop through user submissions here -->
-                    <tr class="hover:bg-gray-50 transition duration-200">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="#" class="text-base font-medium text-indigo-600 hover:text-indigo-800">Two Sum</a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Accepted
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            Python
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            Aug 10, 2025
-                        </td>
-                    </tr>
-                    <!-- Example of a failed submission -->
-                    <tr class="hover:bg-gray-50 transition duration-200">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="#" class="text-base font-medium text-indigo-600 hover:text-indigo-800">Add Two Numbers</a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                Wrong Answer
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            C++
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            Aug 9, 2025
-                        </td>
-                    </tr>
-
-                    <!-- You would replace the above with a loop like this: -->
-                    <!-- 
-                    {% for submission in user_submissions %}
-                        <tr class="hover:bg-gray-50 transition duration-200">
+                <tbody class="bg-white dark:bg-gray-800/50 divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for submission in submissions %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">{{ forloop.counter }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <a href="{% url 'judge' submission.problem.id %}" class="text-base font-medium text-indigo-600 hover:text-indigo-800">
+                                <!-- <a href="{% url 'judge' submission.problem.id %}" class="text-base font-medium text-indigo-600 hover:text-indigo-800"> -->
                                     {{ submission.problem.title }}
                                 </a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {% if submission.status == 'Accepted' %} bg-green-100 text-green-800 {% else %} bg-red-100 text-red-800 {% endif %}">
+                                    {% if submission.status == 'Accepted' %} bg-green-100 text-green-800 
+                                    {% elif 'Error' in submission.status or 'Wrong' in submission.status %} bg-red-100 text-red-800
+                                    {% else %} bg-yellow-100 text-yellow-800 {% endif %}">
                                     {{ submission.status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ submission.language }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="difficulty-badge difficulty-{{ submission.problem.difficulty }}">{{ submission.problem.difficulty }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ submission.submitted_at|date:"M d, Y" }}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                {{ submission.language.name }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {{ submission.submitted_at|date:"M d, Y, P" }}
                             </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                 You have no submissions yet.
                             </td>
                         </tr>
                     {% endfor %}
-                    -->
                 </tbody>
             </table>
         </div>
