@@ -67,10 +67,11 @@
                             <span class="text-[15px] font-semibold text-gray-700 dark:text-gray-300">Status:</span>
                             <span class="rounded-md text-[15px]
                                 {% if status == 'Accepted' %} text-green-800 dark:text-green-300
-                                {% elif status == 'Pending' or status == 'Running' %} text-yellow-800 dark:text-yellow-300
+                                {% elif status == None %} text-yellow-800 dark:text-yellow-300
                                 {% elif not status %} text-amber-700 dark:text-amber-200
-                                {% else %} text-red-800 dark:text-red-300 {% endif %}">
-                                {% if status == 'Accepted' %} Run Successful {% else %} {{ status|default:"Not Executed" }} {% endif %}
+                                {% else %} text-red-800 dark:text-red-300 
+                                {% endif %}">
+                                {% if status == 'Accepted' %} Run Successful {% elif status == None %} Pending {% else %} {{ status }} {% endif %}
                             </span>
                         </div>
                         <button type="submit" name="action" value="run" class="py-1.5 px-5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 dark:bg-cyan-700 dark:hover:bg-cyan-600">

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from problems.models import Submissions, Languages, Questions, TestCases
+from problems.models import Languages, Questions, TestCases
 from problems.forms import QuestionAdminForm
 from problems.utils import save_testcases
 
@@ -47,11 +47,5 @@ class LanguageAdmin(admin.ModelAdmin):
 admin.site.register(TestCases)
 
 
-# Register the Submissions model with a basic interface
-@admin.register(Submissions)
-class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'language', 'status', 'filekey', 'submitted_at')
-    list_filter = ('status', 'language')
-    search_fields = ('user__username',) # Search by username
-    readonly_fields = ('submitted_at','filekey') # Make timestamp read-only
+
 

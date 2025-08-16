@@ -4,8 +4,7 @@ from django.conf import settings
 from pathlib import Path
 import uuid, subprocess, re, os
 from problems.forms import CompilerForm
-from problems.models import Submissions, Questions
-
+from submissions.models import Submissions, Questions
 
 # Create your views here.
 
@@ -61,7 +60,7 @@ def run_submit_view(request, problem_id):
 def execute_code(language, code, input, filekey):
 
     # Base submissions directory
-    submissions_dir = Path(settings.BASE_DIR) / "submissions"
+    submissions_dir = Path(settings.BASE_DIR) / "submissions" / "files"
     # Subdirectories
     codes_dir = submissions_dir / "codes"
     inputs_dir = submissions_dir / "inputs"
@@ -134,6 +133,9 @@ def execute_code(language, code, input, filekey):
     finally:            # Delete java temp file
         if language.extension == "java" and temp_java_path:
                 delete_temp_java_path(temp_java_path, codes_dir, classname)
+        for path in [code_file_path, input_file_path, output_file_path, executable_path]:
+            if path.exists():
+                os.remove(path)
 
     return status, output, filekey
 
@@ -151,7 +153,7 @@ def judge_code(language, code, questionkey):
         time_limit = question.time_limit  
 
         # Base directory
-        submissions_dir = Path(settings.BASE_DIR) / "submissions"
+        submissions_dir = Path(settings.BASE_DIR) / "submissions" / "files"
         testcases_dir = Path(settings.BASE_DIR) / "problems" / "testcases"
         # Subdirectories
         codes_dir = submissions_dir / "codes"

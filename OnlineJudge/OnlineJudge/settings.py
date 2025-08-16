@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'authentication',  # Custom app for user register/login
-    'problems',  # Custom app for compiling and judging submissions
     'core', # Main/Common Page APIs
+    'problems',  # Custom app for compiling and judging submissions
+    'submissions', #App for checking submission code
 ]
 
 MIDDLEWARE = [

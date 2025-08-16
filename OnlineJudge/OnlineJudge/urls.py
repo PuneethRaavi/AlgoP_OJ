@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('core.urls')),  # Include signup app URLs
     path('', include('authentication.urls')), #Include authentication app URLs
     path('', include('problems.urls')),  # Include compiler app URLs
+    path('', include('submissions.urls'))  # Include submissions app URLs
 ]

@@ -34,7 +34,7 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-200">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">{{ forloop.counter }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <!-- <a href="{% url 'judge' submission.problem.id %}" class="text-base font-medium text-indigo-600 hover:text-indigo-800"> -->
+                                <a href="{% url 'submission_detail' submission.filekey %}" class="problem-title text-base font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300">
                                     {{ submission.problem.title }}
                                 </a>
                             </td>
@@ -49,11 +49,11 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="difficulty-badge difficulty-{{ submission.problem.difficulty }}">{{ submission.problem.difficulty }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            <td class="px-6 py-4 text-sm text-rose-950 hover:text-red-600 dark:text-neutral-500 dark:hover:text-neutral-300">
                                 {{ submission.language.name }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                {{ submission.submitted_at|date:"M d, Y, P" }}
+                            <td class="px-6 py-4 text-xs font-semibold text-stone-600  dark:text-slate-500">
+                                {{ submission.submitted_at|date:"d M Y" }}
                             </td>
                         </tr>
                     {% empty %}

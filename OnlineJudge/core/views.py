@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from problems.models import Questions, Submissions
+from submissions.models import Questions, Submissions
 from authentication.decorators import session_check_proceed, public_page_context
 from problems.forms import CompilerForm
 from problems.views import execute_code
@@ -9,16 +9,17 @@ from pathlib import Path
 
 # Create your views here.
 
+@session_check_proceed
+def wip_view(request):
+    user=request.user
+    context={'user':user}
+    return render(request, 'wip.html', context)
+
+
+
 @public_page_context
 def home_view(request, context):
     return render(request, 'home.html', context)  
-
-
-
-# @session_check_proceed
-@public_page_context
-def wip_view(request, context):
-    return render(request, 'wip.html', context)
 
 
 
@@ -44,7 +45,7 @@ def compiler_view(request, context):
             
             filekey = str(uuid.uuid4())
 
-            submissions_dir = Path(settings.BASE_DIR) / "submissions"
+            submissions_dir = Path(settings.BASE_DIR) / "submissions" / "files"
             codes_dir = submissions_dir / "codes"
             inputs_dir = submissions_dir / "inputs"
             outputs_dir = submissions_dir / "outputs"

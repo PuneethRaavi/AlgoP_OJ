@@ -1,10 +1,11 @@
-# Submissions and Runs
+# Python cache files
+__pycache__/
 
-# Code Files
-codes/*
+# Empty files
+__init__.Py
+tests.py
 
-# Input Fies
-inputs/*
-
-# Output Files
-outputs/*
+# Submission files
+files/codes/*
+files/inputs/*
+files/outputs/*

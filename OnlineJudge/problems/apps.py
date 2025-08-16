@@ -9,7 +9,7 @@ class CompilerConfig(AppConfig):
 
     def ready(self):
         # Define paths for our execution/submisssions
-        submissions_dir = Path(settings.BASE_DIR) / "submissions"
+        submissions_dir = Path(settings.BASE_DIR) / "submissions" / "files"
         testcases_dir = Path(settings.BASE_DIR) / "problems" / "testcases"
 
         # Subdirectories
