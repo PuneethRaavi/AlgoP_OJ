@@ -18,6 +18,8 @@ class Submissions(models.Model):
 
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='Pending')
     submitted_at = models.DateTimeField(auto_now_add=True)
+
+    output_log = models.TextField(blank=True, null=True) #For AI review, output is stored here for now
         
     def __str__(self):
         return f"{self.user.username} | {self.language.name} | {self.problem.title} [{self.status}] ({self.submitted_at:%Y-%m-%d %H:%M})"

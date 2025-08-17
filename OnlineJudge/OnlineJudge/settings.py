@@ -11,10 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv() # Load environment variables from .env file if it exists
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -147,3 +151,6 @@ SESSION_COOKIE_SECURE = False   # Set to True in production (for HTTPS)
 # # Optional: Save the session to DB on every request
 # # Useful if you want to update session expiry on activity
 # SESSION_SAVE_EVERY_REQUEST = True
+
+#Gemini API Key
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")

@@ -2,9 +2,11 @@ from django.shortcuts import render, get_object_or_404
 from authentication.decorators import session_check_proceed
 from django.conf import settings
 from pathlib import Path
-import uuid, subprocess, re, os
+import uuid, subprocess, re, os, requests
 from problems.forms import CompilerForm
 from submissions.models import Submissions, Questions
+import google.generativeai as genai
+genai.configure(api_key=settings.GOOGLE_API_KEY)
 
 # Create your views here.
 
@@ -39,7 +41,8 @@ def run_submit_view(request, problem_id):
                     problem=problem,
                     language=language,
                     status=status,
-                    filekey=filekey
+                    filekey=filekey,
+                    output_log=output
                 )
     else:
         form = CompilerForm()           # Initiliaze blank forms only for GET
@@ -54,6 +57,20 @@ def run_submit_view(request, problem_id):
         'sample_tests': sample_tests,
     }
     return render(request, 'judge.html', context)
+
+
+ 
+@session_check_proceed
+def ai_review_view(request, submission_id):
+    submission = get_object_or_404(Submissions, id=submission_id, user=request.user)
+    ai_review_text = get_ai_review(submission) 
+    
+    context = {
+        'submission': submission,
+        'ai_review': ai_review_text,
+    }
+    
+    return render(request, 'aireview.html', context)
 
 
 
@@ -80,6 +97,7 @@ def execute_code(language, code, input, filekey):
     output = ""
     temp_java_path = None
     classname = None
+    executable_path = None 
 
     try:
         if language.extension == "java":     
@@ -134,7 +152,7 @@ def execute_code(language, code, input, filekey):
         if language.extension == "java" and temp_java_path:
                 delete_temp_java_path(temp_java_path, codes_dir, classname)
         for path in [code_file_path, input_file_path, output_file_path, executable_path]:
-            if path.exists():
+            if path and path.exists():
                 os.remove(path)
 
     return status, output, filekey
@@ -255,7 +273,6 @@ def judge_code(language, code, questionkey):
 
 
 
-
 def detect_error(txt, language_extension):
     txt = txt.lower()
 
@@ -296,3 +313,86 @@ def delete_temp_java_path(temp_java_path, codes_dir, classname):
     class_file = codes_dir / f"{classname}.class"
     if class_file.exists():
         os.remove(class_file)
+
+
+
+def get_ai_review(submission):
+    # print("--- 1. Starting AI Review Process ---") # DEBUG PRINT
+    if not settings.GOOGLE_API_KEY:
+        return "AI Review is disabled. The site administrator has not configured an API key."
+
+    try:
+        submissions_dir = os.path.join(settings.BASE_DIR, "submissions", "files", "codes")
+        code_file_path = os.path.join(submissions_dir, f"{submission.filekey}.{submission.language.extension}")
+        # print(f"--- 2. Reading code from: {code_file_path} ---") # DEBUG PRINT
+        with open(code_file_path, 'r') as f:
+            user_code = f.read()
+    except (IOError, FileNotFoundError):
+        return "Error: Could not retrieve the source code for this submission."
+
+    prompt = f"""
+    A user submitted the following {submission.language.name} code for the problem titled "{submission.problem.title}".
+
+    ## Problem Description:
+    {submission.problem.description}
+
+    ## Submission Details:
+    - **Verdict:** {submission.status}
+    - **Error/Output Log:** {submission.output_log if submission.output_log else "No output log available."}
+
+    ## User's Code:
+    ```
+    {user_code}
+    ```
+
+    ## Your Task:
+    Provide a comprehensive, educational review of the user's submission. Structure your response with the following markdown sections:
+
+    ### 1. Debugging
+    Briefly explain the likely reason for the '{submission.status}' verdict in 1-2 sentences.
+    Go into more detail about what went wrong. Explain the logical error, syntax mistake, or algorithmic inefficiency.
+    
+    ### 2. Suggested Fix
+    Provide a specific, actionable hint or a small code snippet (do not give the full solution) to guide the user toward correcting their code.
+    """
+
+    api_key = settings.GOOGLE_API_KEY
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    
+    headers = {"Content-Type": "application/json"}
+    
+    data = {
+        "contents": [{
+            "parts": [{
+                "text": prompt
+            }]
+        }]
+    }
+
+    try:
+        # This is the key change: we add a timeout of 15 seconds to the request.
+        response = requests.post(url, headers=headers, json=data, timeout=15)
+        response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
+
+        response_json = response.json()
+        
+        # Extract the text from the correct location in the JSON response
+        review_text = response_json['candidates'][0]['content']['parts'][0]['text']
+        return review_text.strip()
+
+    except requests.exceptions.Timeout:
+        # This block runs ONLY when the 15-second timeout is reached
+        print("--- !!! ERROR: Gemini API call timed out via requests. ---")
+        return "Gemini took too long to respond. Please try again after a few minutes."
+        
+    except requests.exceptions.RequestException as e:
+        # This catches other network-related errors (e.g., connection error, bad status code)
+        print(f"--- !!! ERROR during requests API call: {e} ---")
+        # Optionally, inspect the response content if available
+        error_details = e.response.json() if e.response else "No response from server."
+        return f"Could not generate a review due to a network or API error: {error_details}"
+    except (KeyError, IndexError) as e:
+        # This catches errors if the response JSON is not in the expected format
+        print(f"--- !!! ERROR: Could not parse Gemini's response: {e} ---")
+        return "Error: Received an unexpected response format from the AI. Please try again."
+

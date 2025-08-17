@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load markdown %}
+
+{% block title %}AI Review for {{ submission.problem.title }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{% static 'css/aireview.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hint-container max-w-4xl mx-auto -mt-8">
+    <div class="h-full w-full bg-white dark:bg-gray-800/50 rounded-xl shadow-md border border-gray-300 dark:border-gray-600 flex flex-col">
+
+        <div class="flex-shrink-0 p-4 border-b border-gray-300 dark:border-gray-600 bg-stone-100/50 dark:bg-slate-950/30 flex justify-between items-center">
+            <!-- Left Side: Title -->
+            <div class="flex items-center gap-4">
+                <h1 class="text-lg font-bold text-gray-900 dark:text-white">
+                    <span class="text-blue-600 dark:text-sky-500">AI Review</span> for {{ submission.problem.title }}
+                </h1>
+            </div>
+            
+            <!-- Right Side: Controls and Model Name -->
+            <div class="flex items-center gap-6">
+                <!-- NEW: Model Name Badge -->
+                <div class="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+                    <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.96 2.59a1.003 1.003 0 0 0-1.92 0L10.08 5.4a1 1 0 0 1-.94.69l-3.08.45a1 1 0 0 0-.55 1.7l2.23 2.17a1 1 0 0 1 .29.88l-.53 3.07a1 1 0 0 0 1.45 1.05l2.75-1.45a1 1 0 0 1 .93 0l2.75 1.45a1 1 0 0 0 1.45-1.05l-.53-3.07a1 1 0 0 1 .29-.88l2.23-2.17a1 1 0 0 0-.55-1.7l-3.08-.45a1 1 0 0 1-.94-.69L12.96 2.59Z"/></svg>
+                    <span class="text-[10px] font-medium tracking-wider">Powered by Gemini 1.5 Flash</span>
+                </div>
+                
+                <!-- Font Selector -->
+                <div class="flex items-center gap-3">
+                    <label for="review-font-size-selector" class="block text-xs font-medium text-gray-600 dark:text-gray-300">Font</label>
+                    <select id="review-font-size-selector" class="block w-full pl-3 pr-8 py-1 text-xs border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md">
+                        <option value="12px">12px</option>
+                        <option value="14px" selected>14px</option>
+                        <option value="16px">16px</option>
+                        <option value="18px">18px</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="review-content" class="flex-grow p-8 overflow-y-auto">
+            <div class="prose prose-sm dark:prose-invert max-w-none">
+                {{ ai_review|markdown }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/aireview.js' %}"></script>
+{% endblock %}
