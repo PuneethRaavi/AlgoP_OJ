@@ -1,0 +1,22 @@
+__pycache__/
+
+# Ignore version control
+.git/
+.gitignore
+
+# Ignore local database files (SQLite etc.)
+*.db
+
+# Ignore system files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore logs
+*.log
+
+# Ignore environment files (secrets)
+.env
+
+
+
