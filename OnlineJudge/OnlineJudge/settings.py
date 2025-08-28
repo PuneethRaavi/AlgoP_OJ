@@ -27,9 +27,9 @@ load_dotenv() # Load environment variables from .env file if it exists
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -147,11 +148,18 @@ SESSION_COOKIE_AGE = 3600
 
 # Session cookie settings (secure in production)
 SESSION_COOKIE_HTTPONLY = True  # Prevents JS from accessing the session cookie
-SESSION_COOKIE_SECURE = False   # Set to True in production (for HTTPS)
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
 
-# # Optional: Save the session to DB on every request
-# # Useful if you want to update session expiry on activity
-# SESSION_SAVE_EVERY_REQUEST = True
+# Optional: Save the session to DB on every request
+# Useful if you want to update session expiry on activity
+SESSION_SAVE_EVERY_REQUEST = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 #Gemini API Key
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+
+# Static files settings for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

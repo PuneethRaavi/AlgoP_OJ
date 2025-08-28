@@ -1,6 +1,7 @@
 #venv
 OJ/ 
 
+# environment variables, secret keys
 .env
 
 # database file
@@ -8,6 +9,12 @@ db.sqlite3
 
 #
 .DS_Store
+
+#aws keys
+PvR_accessKeys.csv
+ecr2instance_onlinejudge.pem
+
+
 
 
 

@@ -1,0 +1,48 @@
+# Defines the location of your Django/Gunicorn application server.
+upstream django_server {
+    server web:8000;
+}
+
+# This server block handles all initial, non-secure HTTP requests on port 80.
+server {
+    listen 80;
+    server_name onlinejudge.ddns.net;
+
+    # This location block is still needed so Certbot can renew the certificate in the future.
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # This rule takes all other HTTP requests and permanently redirects them to the secure HTTPS version.
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# This server block handles all secure HTTPS traffic on port 443.
+server {
+    # Listen for secure SSL/TLS traffic on port 443.
+    listen 443 ssl;
+    server_name onlinejudge.ddns.net;
+
+    #
+    # THESE LINES ENABLE HTTPS
+    # They point to the certificate and private key files that Certbot created for you.
+    #
+    ssl_certificate /etc/letsencrypt/live/onlinejudge.ddns.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/onlinejudge.ddns.net/privkey.pem;
+
+    # This rule serves your static files securely.
+    location /static/ {
+        alias /algop_oj/staticfiles/;
+    }
+
+    # This rule securely proxies all other requests to your Django application.
+    location / {
+        proxy_pass http://django_server;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

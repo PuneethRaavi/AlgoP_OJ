@@ -23,8 +23,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . /algop_oj
 
+# Run collectstatic to gather all static files
+RUN python manage.py collectstatic --noinput
+
 # Expose port
 EXPOSE 8000
 
-# Default run command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Set the command to run Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "OnlineJudge.wsgi:application"]
