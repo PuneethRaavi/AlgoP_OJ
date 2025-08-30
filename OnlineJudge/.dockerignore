@@ -1,4 +1,6 @@
 __pycache__/
+docker-compose.yml
+nginx.conf
 
 # Ignore version control
 .git/
@@ -6,6 +8,7 @@ __pycache__/
 
 # Ignore local database files (SQLite etc.)
 *.db
+languages_problems_testdb.json
 
 # Ignore system files
 .DS_Store
@@ -17,6 +20,9 @@ __pycache__/
 
 # Ignore environment files (secrets)
 .env
+.env.example
+
+
 
 
 

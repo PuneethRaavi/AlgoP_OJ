@@ -31,8 +31,8 @@ class QuestionAdmin(admin.ModelAdmin):
         input_file = form.cleaned_data.get('main_input_file')
         output_file = form.cleaned_data.get('main_output_file')
 
-        # Proceed only if both files have been uploaded
-        if input_file and output_file:
+        # Proceed if either files have been uploaded
+        if input_file or output_file:
             save_testcases(obj, input_file, output_file)
             
 

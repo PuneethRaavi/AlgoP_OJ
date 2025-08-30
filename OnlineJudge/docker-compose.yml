@@ -1,32 +1,75 @@
+# ---Development configuration for Docker Compose---
+# It sets up the Django application and a PostgreSQL database.
 services:
-  # This service runs your Django + Gunicorn application
+  # The Django application service
   web:
-    # Use your ECR image URL here
-    image: 715227882366.dkr.ecr.ap-south-1.amazonaws.com/onlinejudge:latest
-    command: gunicorn --bind 0.0.0.0:8000 OnlineJudge.wsgi:application
+    # Build the image from the Dockerfile in the current directory.
+    build: .
+    # This command OVERRIDES the Gunicorn CMD in the Dockerfile.
+    # It starts the Django development server, which has auto-reloading.
+    command: python manage.py runserver 0.0.0.0:8000
+    # This volume mounts your local code into the container.
+    # When you save a file, it's instantly updated in the container.
     volumes:
-      - static_volume:/algop_oj/staticfiles
-    env_file:
-      - .env
-
-  # This service runs the Nginx web server
-  nginx:
-    image: nginx:latest
+      - .:/algop_oj
     ports:
-      - "80:80"   # Maps the server's public port 80 to this container's port 80
-      - "443:443" # Add this port for HTTPS
-    volumes:
-      # Link the Nginx configuration file
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      # Shares the static files directory with the Nginx container
-      - static_volume:/algop_oj/staticfiles:ro
-      # Https configuration
-      - ./certbot/www:/var/www/certbot/:ro
-      - /etc/letsencrypt/:/etc/letsencrypt/:ro
-
+      # Maps port 8000 on your local machine to port 8000 in the container.
+      - "8000:8000"
+    env_file:
+      # Loads environment variables from your local .env file.
+      - .env
+    # Ensures the database container starts before the web container.
     depends_on:
-      - web # Ensure Nginx starts after the web service(Django application)
+      - db
 
-# Defines the shared volume for static files
+  # The PostgreSQL database service
+  db:
+    image: postgres:13
+    volumes:
+      # This volume persists the database data between restarts.
+      - postgres_data:/var/lib/postgresql/data/
+    # These variables create the initial database and user.
+    # The values are pulled from your local .env file.
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+
+# Defines the named volume for the database.
 volumes:
-  static_volume:
+  postgres_data:
+
+
+# #---Deployment configuration for Docker Compose---
+# services:
+#   # This service runs your Django + Gunicorn application
+#   web:
+#     # Use your ECR image URL here
+#     image: 715227882366.dkr.ecr.ap-south-1.amazonaws.com/onlinejudge:latest
+#     command: gunicorn --bind 0.0.0.0:8000 OnlineJudge.wsgi:application
+#     volumes:
+#       - static_volume:/algop_oj/staticfiles
+#     env_file:
+#       - .env
+
+#   # This service runs the Nginx web server
+#   nginx:
+#     image: nginx:latest
+#     ports:
+#       - "80:80"   # Maps the server's public port 80 to this container's port 80
+#       - "443:443" # Add this port for HTTPS
+#     volumes:
+#       # Link the Nginx configuration file
+#       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+#       # Shares the static files directory with the Nginx container
+#       - static_volume:/algop_oj/staticfiles:ro
+#       # Https configuration
+#       - ./certbot/www:/var/www/certbot/:ro
+#       - /etc/letsencrypt/:/etc/letsencrypt/:ro
+
+#     depends_on:
+#       - web # Ensure Nginx starts after the web service(Django application)
+
+# # Defines the shared volume for static files
+# volumes:
+#   static_volume:
