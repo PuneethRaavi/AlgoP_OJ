@@ -2,7 +2,7 @@
 
 A minimalist **Django-powered platform** for coding challenges, featuring an **online compiler**, **multi-language support**, and **AI-driven feedback**.
 
-🌐 Live Website: [onlinejudge.ddns.net](http://onlinejudge.ddns.net)  
+🌐 Live Website: [onlinejudge.ddns.net](https://onlinejudge.ddns.net)  
 
 <p>
   <a href="https://www.loom.com/share/4f91bca40188456ebc052668327e3bbb?sid=28271b34-8abb-4658-b336-604d19dc033e" 
