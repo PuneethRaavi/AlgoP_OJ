@@ -11,50 +11,87 @@
 {% block content %}
 <div class="max-w-7xl mx-auto">
     <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-lg rounded-xl shadow-md hover:shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-shadow duration-300">
-        
-        <!-- Header and Controls -->
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 md:flex md:items-center md:justify-between">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Problem Set</h1>
-            
-            <!-- Filter and Sort Controls -->
-            <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                <!-- Filter by Difficulty -->
-                <div>
-                    <label for="difficulty-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Difficulty</label>
-                    <select id="difficulty-filter" name="difficulty-filter" class="mt-1 block w-full max-w-xs px-2 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300">
-                        <option>All</option>
-                        <option>Easy</option>
-                        <option>Medium</option>
-                        <option>Hard</option>
-                    </select>
-                </div>
-                <!-- Sort by Title -->
-                <div>
-                    <label for="sort-by" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sort By</label>
-                    <select id="sort-by" name="sort-by" class="mt-1 block w-full max-w-xs px-2 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-gray-600 focus:border-slate-200 dark:focus:border-gray-500 transition duration-300">
-                        <option value="default">Default</option>
-                        <option value="title-asc">Title (A-Z)</option>
-                        <option value="title-desc">Title (Z-A)</option>
-                    </select>
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Problem Set</h1>
+                
+                <div id="controls-form" class="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto scale-[0.85]">
+                    <!-- Controls -->
+                    <form id="problems-controls-form" method="get" action="" class="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto">
+                        <!-- Search Input -->
+                        <div class="relative flex-grow">
+                            <input type="search" name="q" id="search-input" placeholder="Search by title or author..."
+                                value="{{ request.GET.q|default_if_none:'' }}"
+                                class="w-full md:w-64 pl-10 pr-4 py-1.5 text-[14px] bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-500 dark:focus:ring-teal-400 transition duration-300">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <!-- Difficulty Filter -->
+                        <div>
+                            <select name="difficulty" id="difficulty-filter" aria-label="Filter by difficulty" class="w-full md:w-auto pl-2 pr-1 py-2 text-[13px] bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-500 dark:focus:ring-teal-400 transition duration-300">
+                                <option value="All" {% if request.GET.difficulty == 'All' or not request.GET.difficulty %}selected{% endif %}>All Difficulties</option>
+                                <option value="Easy" {% if request.GET.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                                <option value="Medium" {% if request.GET.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="Hard" {% if request.GET.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+                            </select>
+                        </div>
+                        <!-- Sort Controls -->
+                        <input type="hidden" name="sort" id="sort-key" value="{{ request.GET.sort|default_if_none:'id' }}">
+                        <input type="hidden" name="dir" id="sort-dir" value="{{ request.GET.dir|default_if_none:'asc' }}">
+                        <button type="submit" class="hidden">Apply</button>
+                    </form>
                 </div>
             </div>
         </div>
-
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-800">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16">#</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Title</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16">
+                            <div class="flex items-center">
+                                <span>#</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <div class="flex items-center">
+                                <span>Title</span>
+                                {% if questions.number == 1 %}
+                                <div class="ml-1 flex flex-col">
+                                    <a href="#" class="sort-arrow-link" data-sort-key="title" data-sort-dir="asc" title="Sort by Title ascending">
+                                        <svg class="sort-arrow h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+                                    </a>
+                                    <a href="#" class="sort-arrow-link" data-sort-key="title" data-sort-dir="desc" title="Sort by Title descending">
+                                        <svg class="sort-arrow h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Difficulty</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Author</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Published</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <div class="flex items-center">
+                                <span>Published</span>
+                                {% if questions.number == 1 %}
+                                <div class="ml-1 flex flex-col">
+                                    <a href="#" class="sort-arrow-link" data-sort-key="date" data-sort-dir="asc" title="Sort by Published date ascending">
+                                        <svg class="sort-arrow h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+                                    </a>
+                                    <a href="#" class="sort-arrow-link" data-sort-key="date" data-sort-dir="desc" title="Sort by Published date descending">
+                                        <svg class="sort-arrow h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="problems-table-body" class="bg-white dark:bg-gray-800/50 divide-y divide-gray-200 dark:divide-gray-700">
                     {% for question in questions %}
-                        <tr class="problem-row hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-200" data-difficulty="{{ question.difficulty }}">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">{{ forloop.counter }}</td>
+                        <tr class="problem-row hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-200" data-difficulty="{{ question.difficulty }}" data-created-at="{{ question.created_at|date:'Y-m-d\TH:i:s' }}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">{{ questions.start_index|add:forloop.counter|add:"-1" }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <a href="{% url 'judge' question.id %}" class="problem-title text-base font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300">
                                     {{ question.title }}
@@ -67,7 +104,7 @@
                                 <span class="ml-2.5 text-sm text-rose-950 hover:text-red-600 dark:text-neutral-500 dark:hover:text-neutral-300">{{ question.author }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-xs font-semibold text-stone-600  dark:text-slate-500">{{ question.created_at|date:"M j Y" }}</span>
+                                <span class="text-xs font-semibold text-stone-600  dark:text-slate-500">{{ question.created_at|date:"j M Y" }}</span>
                             </td>
                         </tr>
                     {% empty %}
@@ -81,6 +118,77 @@
             </table>
         </div>
     </div>
+
+    <!-- Pagination -->
+    {% if questions.has_other_pages %}
+    <div class="flex items-center justify-between px-4 py-3 sm:px-6 rounded-b-xl">
+        <!-- For mobile view -->
+        <div class="flex flex-1 justify-between sm:hidden">
+            {% if questions.has_previous %}
+            <a href="?page={{ questions.previous_page_number }}" class="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">Previous</a>
+            {% endif %}
+            {% if questions.has_next %}
+            <a href="?page={{ questions.next_page_number }}" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">Next</a>
+            {% endif %}
+        </div>
+        <!-- For larger screens -->
+        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    Showing
+                    <span class="font-medium">{{ questions.start_index }}</span>
+                    to
+                    <span class="font-medium">{{ questions.end_index }}</span>
+                    of
+                    <span class="font-medium">{{ questions.paginator.count }}</span>
+                    problems
+                </p>
+            </div>
+            <div class="ml-auto">
+                <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm scale-[0.7]" aria-label="Pagination">
+                    {% if questions.has_previous %}
+                    <a href="?page=1" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0">
+                        <span class="sr-only">First</span>
+                        &laquo;&laquo;
+                    </a>
+                    <a href="?page={{ questions.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0">
+                        <span class="sr-only">Previous</span>
+                        &laquo;
+                    </a>
+                    {% endif %}
+
+                    {% for num in questions.paginator.page_range %}
+                        {% if questions.number == num %}
+                        <a href="#" aria-current="page" class="relative z-10 inline-flex items-center bg-teal-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600">{{ num }}</a>
+                        {% elif num > questions.number|add:'-2' and num < questions.number|add:'2' %}
+                        <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0">{{ num }}</a>
+                        {% elif forloop.first or forloop.last %}
+                            {% if forloop.first and questions.number > 3 %}
+                            <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 ring-1 ring-inset ring-gray-300 dark:ring-gray-600">...</span>
+                            {% endif %}
+                             <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0">{{ num }}</a>
+                            {% if forloop.last and questions.number < questions.paginator.num_pages|add:'-2' %}
+                            <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 ring-1 ring-inset ring-gray-300 dark:ring-gray-600">...</span>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if questions.has_next %}
+                    <a href="?page={{ questions.next_page_number }}" class="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0">
+                        <span class="sr-only">Next</span>
+                        &raquo;
+                    </a>
+                    <a href="?page={{ questions.paginator.num_pages }}" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0">
+                        <span class="sr-only">Last</span>
+                        &raquo;&raquo;
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}
 

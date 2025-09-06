@@ -1,12 +1,28 @@
 from django.db import models
-from authentication.models import user_registrations
-from problems.models import Languages, Questions, STATUS_CHOICES
+from django.contrib.auth.models import User
+from problems.models import Languages, Questions
+
+# A list of possible statuses for a submission.
+STATUS_CHOICES = [
+    ('Pending', 'Pending'), # Default status (Debugging)
+    ('Accepted', 'Accepted'),
+    ('Wrong Answer', 'Wrong Answer'),
+    ('Time Limit Exceeded', 'Time Limit Exceeded'),
+    ('Syntax Error', 'Syntax Error'),
+    ('Indentation Error', 'Indentation Error'),
+    ('Value Error', 'Value Error'),
+    ('Name Error', 'Name Error'),
+    ('Type Error', 'Type Error'),
+    ('Compilation Error', 'Compilation Error'),
+    ('Runtime Error', 'Runtime Error'),
+    ('System Error', 'System Error')
+]
 
 # Create your models here.
 
 class Submissions(models.Model):
 
-    user = models.ForeignKey(user_registrations, on_delete=models.CASCADE, related_name='submissions')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
 
     language = models.ForeignKey(Languages, on_delete=models.PROTECT, related_name='submissions', help_text="Language of the submission")
     problem = models.ForeignKey(Questions, on_delete=models.CASCADE, related_name='submissions', help_text="Problem Title")

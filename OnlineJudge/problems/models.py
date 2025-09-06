@@ -1,23 +1,5 @@
 from django.db import models
-from authentication.models import user_registrations
-
-# A list of possible statuses for a submission.
-STATUS_CHOICES = [
-    ('Pending', 'Pending'),
-    ('Running', 'Running'),
-    ('Accepted', 'Accepted'),
-    ('Wrong Answer', 'Wrong Answer'),
-    ('Time Limit Exceeded', 'Time Limit Exceeded'),
-    ('Syntax Error', 'Syntax Error'),
-    ('Indentation Error', 'Indentation Error'),
-    ('Value Error', 'Value Error'),
-    ('Name Error', 'Name Error'),
-    ('Type Error', 'Type Error'),
-    ('Compilation Error', 'Compilation Error'),
-    ('Runtime Error', 'Runtime Error'),
-    ('Memory Limit Exceeded', 'Memory Limit Exceeded'),
-    ('System Error', 'System Error')
-]
+from django.contrib.auth.models import User
 
 # A list of difficulty levels for problems.
 DIFFICULTY_CHOICES = [
@@ -26,6 +8,7 @@ DIFFICULTY_CHOICES = [
     ('Hard', 'Hard'),
 ]
 
+# Create your models here.
 
 class Languages(models.Model):
   
@@ -67,7 +50,7 @@ class Questions(models.Model):
     memory_limit = models.IntegerField(default=256, help_text="Memory limit in megabytes (MB).")
 
     # Meta information
-    author = models.ForeignKey(user_registrations, on_delete=models.SET_NULL, null=True, related_name='authored_problems')
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='authored_problems')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_verified = models.BooleanField(default=False)

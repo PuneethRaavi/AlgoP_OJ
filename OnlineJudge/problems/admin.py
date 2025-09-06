@@ -17,8 +17,8 @@ class TestCaseInline(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     form = QuestionAdminForm
     
-    list_display = ('id', 'title', 'difficulty','questionkey')
-    list_display_links = ('id', 'title')
+    list_display = ('title', 'difficulty', 'questionkey', 'updated_at')
+    list_display_links = ('title',)
     readonly_fields = ('questionkey',)
     search_fields = ('title',)
     inlines = [TestCaseInline] # Attach the TestCase editor

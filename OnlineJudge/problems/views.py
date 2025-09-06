@@ -301,6 +301,11 @@ def detect_error(txt, language_extension):
             return "Type Error"
         return "Compilation Error"
 
+    elif language_extension == "java":
+        # If javac produced stderr, it's a compilation problem
+        if "error" in txt or "exception" in txt:
+            return "Compilation Error"
+
     return "Runtime Error"
 
 
