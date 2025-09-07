@@ -20,6 +20,7 @@ nav {
     /* A transparent white background for a glassy effect */
     background-color: rgba(255, 255, 255, 0.75); 
     /* Blurs the content behind the navbar */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
     backdrop-filter: blur(10px);
     /* A light gray border at the bottom of the navbar */
     border-bottom: 1px solid #e5e7eb; 
