@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'OnlineJudge.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.postgresql'),
+        'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
         'NAME': os.getenv('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
@@ -159,6 +159,28 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 #Gemini API Key
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+
+#Google OAuth2
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+
+#GitHub OAuth2
+GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
+GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI")
+  
+# SMTP Configuration
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', '30'))
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@onlinejudge.dev')
+SERVER_EMAIL = os.getenv('SERVER_EMAIL', 'admin@onlinejudge.dev')
+EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX', '[OnlineJudge] ')
 
 # Static files settings for production
 STATIC_ROOT = BASE_DIR / 'staticfiles'

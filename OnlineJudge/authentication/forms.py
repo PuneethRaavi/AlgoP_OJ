@@ -16,6 +16,18 @@ class UserRegistrationForm(forms.ModelForm):
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("A user with this username already exists.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("A user with this email already exists.")
+        return email
+
     def clean_password(self):
         password = self.cleaned_data.get("password")
         if password and len(password) < 8:
@@ -43,31 +55,22 @@ class UserRegistrationForm(forms.ModelForm):
    
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(error_messages={'required': 'Username is required.'})
+    password = forms.CharField(widget=forms.PasswordInput, error_messages={'required': 'Password is required.'})
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
-        if not username:
-            raise forms.ValidationError("Username is required.")
         try:
             self.user = User.objects.get(username=username)
         except User.DoesNotExist:
             raise forms.ValidationError("Invalid username. Please register first or try again.")
         return username
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if 'username' in self.errors:
-            return password  
-        if not password:
-            raise forms.ValidationError("Password is required.")
-        return password
-
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
-        if self.user and password and not self.user.check_password(password):
+        user = getattr(self, 'user', None)
+        if user and password and not user.check_password(password):
             self.add_error('password', "Invalid password.")
         return cleaned_data
     
@@ -79,8 +82,8 @@ class UserForgetPasswordForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        if not email:
-            raise forms.ValidationError("Email is required.")
+        # if not email:
+        #     raise forms.ValidationError("Email is required.")
         try:
             self.user = User.objects.get(email=email)
         except User.DoesNotExist:
