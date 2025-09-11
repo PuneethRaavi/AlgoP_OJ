@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect
+from authentication.models import OTP
 from authentication.forms import UserRegistrationForm, UserLoginForm, UserForgetPasswordForm
 from django.contrib.auth import login, logout, get_user_model
 from django.contrib import messages
 from django.conf import settings
 from django.db import IntegrityError
+from django.http import JsonResponse
 from authentication.decorators import if_authenticated_redirect
 from django.utils.crypto import get_random_string
 from urllib.parse import quote, unquote
+from .utils import send_otp_email
 import requests
 
 
@@ -16,16 +19,67 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         try:
             if form.is_valid():
-                form.save()     
-                messages.success(request, "You've successfully registered. Please log in to continue.")
-                return redirect('/auth/login/')
-            else:
-                messages.error(request, "Please fix the errors below and resubmit.")
+                request.session['registration_data_ydghfi78a6ftg8afy'] = form.cleaned_data
+                otp_instance = OTP.objects.create(
+                    email=form.cleaned_data['email'],
+                    purpose='registration',
+                    otp=get_random_string(6, allowed_chars='0123456789')
+                )
+                send_otp_email(otp_instance.email, otp_instance.otp, 'registration')
+                return redirect('verify_registration')
         except IntegrityError:
-                messages.error(request, "Registration failed. Please try again.")
+            messages.error(request, "Registration failed. Please try again.")
     else:
-        form = UserRegistrationForm()
+        if 'registration_data_ydghfi78a6ftg8afy' in request.session:
+            form = UserRegistrationForm(request.session['registration_data_ydghfi78a6ftg8afy'])
+        else:
+            form = UserRegistrationForm()
+            
     return render(request, 'register.html', {'form': form})
+
+
+@if_authenticated_redirect
+def verify_registration(request):
+    registration_data = request.session.get('registration_data_ydghfi78a6ftg8afy')
+    if not registration_data:
+        messages.error(request, "Registration session expired. Please register again.")
+        return redirect('register')
+
+    if request.method == 'POST':
+        action = request.POST.get('action', 'verify')
+        if action == 'resend':
+            otp_instance = OTP.objects.create(
+                email=registration_data['email'],
+                purpose='registration',
+                otp=get_random_string(6, allowed_chars='0123456789')
+            )
+            send_otp_email(otp_instance.email, otp_instance.otp, 'registration')
+            return JsonResponse({'success': True, 'message': 'A new OTP has been sent to your email.'})
+        
+        otp_entered = request.POST.get('otp')
+        otp_obj = OTP.get_latest_valid(registration_data['email'], 'registration')
+        if not otp_obj:
+            messages.error(request, "No valid OTP found. Please request a new one.")
+        elif otp_obj.otp != otp_entered:
+            messages.error(request, "Invalid OTP. Please try again.")
+        else:  # OTP is valid, Create user
+            form = UserRegistrationForm(registration_data)
+            if form.is_valid():
+                user = form.save()
+                otp_obj.mark_verified()
+                if 'registration_data_ydghfi78a6ftg8afy' in request.session:
+                    del request.session['registration_data_ydghfi78a6ftg8afy']
+                login(request, user)
+                return redirect('/') 
+            else:
+                messages.error(request, "An error occurred during registration. Please try again.")
+                return redirect('register')
+
+    context = {
+        'email': registration_data['email'],
+        'username': registration_data['username'],
+    }
+    return render(request, 'register_verification.html', context)
 
 
 @if_authenticated_redirect

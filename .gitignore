@@ -14,6 +14,9 @@ db.sqlite3
 PvR_accessKeys.csv
 ecr2instance_onlinejudge.pem
 
+#SSL certificate file directory
+SSL_CERT_FILE.txt
+
 
 
 

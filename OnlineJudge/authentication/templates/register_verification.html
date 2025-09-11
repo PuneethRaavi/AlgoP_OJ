@@ -1,0 +1,145 @@
+{% extends 'auth_base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP - OnlineJudge{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+
+    <!-- Messages Block -->
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+            <div class="p-4 rounded-md 
+                {% if message.tags == 'success' %} bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 {% endif %}
+                {% if message.tags == 'error' %} bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 {% endif %}
+                {% if message.tags == 'warning' %} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'register' %}" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-300">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to registration
+        </a>
+    </div>
+
+    <!-- OTP Verification Form Card -->
+    <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-lg rounded-xl shadow-md hover:shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-shadow duration-300">
+        <form method="post" class="p-8 space-y-6">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="register">
+            
+            <!-- Heading -->
+            <div class="text-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Verify Your Email</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">We've sent a verification code to your email</p>
+            </div>
+            
+            {% if form.non_field_errors %}
+                <div class="p-3 bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 rounded-md text-sm">{{ form.non_field_errors.0 }}</div>
+            {% endif %}
+
+            <!-- Account Details (Read-only) -->
+            <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/30 dark:to-gray-800/30 rounded-lg p-5 space-y-4 border border-gray-200/50 dark:border-gray-600/30">
+                <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-teal-600 dark:text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                    </svg>
+                    Account Details
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-white/70 dark:bg-gray-800/40 rounded-md p-3 border border-gray-200/30 dark:border-gray-600/20">
+                        <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Email Address</label>
+                        <div class="text-sm text-gray-900 dark:text-white font-medium break-all">{{ email }}</div>
+                    </div>
+                    <div class="bg-white/70 dark:bg-gray-800/40 rounded-md p-3 border border-gray-200/30 dark:border-gray-600/20">
+                        <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Username</label>
+                        <div class="text-sm text-gray-900 dark:text-white font-medium">{{ username }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTP Field -->
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <label for="id_otp" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Verification Code
+                        <span class="text-red-500">*</span>
+                    </label>
+            <button type="button" id="resend-otp-btn" 
+                data-verify-url="{% url 'verify_registration' %}" 
+                data-email="{{ email }}"
+                class="text-xs font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300 inline-flex items-center" disabled>
+                        <span id="resend-label">Resend Code</span><span id="timer" class="ml-1 text-gray-500 dark:text-gray-400"></span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <input type="text" name="otp" id="id_otp" maxlength="6"
+                            class="block w-32 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 text-center text-lg tracking-widest font-mono"
+                            placeholder="000000"
+                            autocomplete="one-time-code">
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Enter the 6-digit code sent to your email</p>
+                    </div>
+                </div>
+                {% if form.otp.errors %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.otp.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-300">
+                    Complete Registration
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Help Text -->
+    <div class="mt-6 text-center">
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+            Didn't receive the code? Check your spam folder or try resending after 30 seconds.
+        </p>
+    </div>
+</div>
+
+<!-- Custom Toast Notification for OTP Messages -->
+<div id="otp-toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-sm">
+        <div class="flex items-start">
+            <div id="toast-icon" class="flex-shrink-0 mr-3 mt-0.5">
+                <!-- Success Icon -->
+                <svg id="success-icon" class="w-5 h-5 text-green-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <!-- Error Icon -->
+                <svg id="error-icon" class="w-5 h-5 text-red-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h4 id="toast-title" class="text-sm font-medium text-gray-900 dark:text-white"></h4>
+                <p id="toast-message" class="text-sm text-gray-500 dark:text-gray-400 mt-1"></p>
+            </div>
+            <button id="toast-close" title="Close notification" class="flex-shrink-0 ml-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/register_verification.js' %}" defer></script>
+{% endblock %}
