@@ -1,4 +1,4 @@
-// OTP resend & timer script (clean version)
+// OTP resend & timer script
 // Handles: toast notifications, countdown timer, resend action, OTP input formatting & auto-submit.
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -88,8 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       body: new URLSearchParams({ action: 'resend', email: emailValue, purpose: 'registration' })
     })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Network response was not ok');
+        return r.json();
+      })
       .then(data => {
+        if (data.redirect) {
+          window.location.href = data.redirect;
+          return;
+        }
         if (data.success) {
           showToast('OTP Sent', data.message || 'Verification code sent.', 'success');
           setTimeout(() => { if (resendLabel) resendLabel.textContent = 'Resend Code'; startTimer(); }, 900);
@@ -99,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
           showToast('Send Failed', data.message || 'Could not send code.', 'error');
         }
       })
-      .catch(() => {
+      .catch(error => {
         if (resendLabel) resendLabel.textContent = 'Resend Code';
         resendBtn.disabled = false;
         showToast('Network Error', 'Please try again.', 'error');

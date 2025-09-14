@@ -4,25 +4,25 @@
 {% block title %}Register - OnlineJudge{% endblock %}
 
 {% block content %}
+
+<!-- Messages Block -->
+{% if messages %}
+<div class="mb-4 max-w-xl text-center mx-auto">
+    {% for message in messages %}
+        <div class="p-4 rounded-lg border text-sm
+            {% if message.tags == 'success' %} bg-green-50/80 text-green-700 border-green-200/60 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800/30 {% endif %}
+            {% if message.tags == 'error' %} bg-red-50/80 text-red-700 border-red-200/60 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800/30 {% endif %}
+            {% if message.tags == 'warning' %} bg-amber-50/80 text-amber-700 border-amber-200/60 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/30 {% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="max-w-md mx-auto">
-
-    <!-- Messages Block -->
-    {% if messages %}
-    <div class="mb-4">
-        {% for message in messages %}
-            <div class="p-4 rounded-md 
-                {% if message.tags == 'success' %} bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 {% endif %}
-                {% if message.tags == 'error' %} bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 {% endif %}
-                {% if message.tags == 'warning' %} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
     <!-- Register Form Card  -->
     <div class="bg-white dark:bg-gray-800/50 dark:backdrop-blur-lg rounded-xl shadow-md hover:shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-shadow duration-300">
-        <form method="post" class="p-8 space-y-6">
+        <form method="post" class="p-8 space-y-4">
             {% csrf_token %}
             
             <!-- Heading -->
@@ -74,7 +74,7 @@
         </form>
     </div>
 
-    <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+    <p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
         Already have an account?
         <a href="{% url 'login' %}" class="font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300">
             Log in here

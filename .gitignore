@@ -17,6 +17,9 @@ ecr2instance_onlinejudge.pem
 #SSL certificate file directory
 SSL_CERT_FILE.txt
 
+#Deployment scripts
+deployment_codes.txt
+
 
 
 

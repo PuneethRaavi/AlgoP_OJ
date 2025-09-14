@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password, check_password
 import re
 
 class UserRegistrationForm(forms.ModelForm):
@@ -76,41 +75,35 @@ class UserLoginForm(forms.Form):
     
     
 class UserForgetPasswordForm(forms.Form):
-    email = forms.CharField()
-    # password = forms.CharField(widget=forms.PasswordInput, label= "New Password")
-    # confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm New Password")
+    email = forms.EmailField()
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        # if not email:
-        #     raise forms.ValidationError("Email is required.")
         try:
             self.user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise forms.ValidationError("Invalid Email ID. Register first")
+            raise forms.ValidationError("Invalid Email ID.")
         return email
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if password and len(password) < 8:
+
+class UserResetPasswordForm(forms.Form):
+    new_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': '8+ characters with a number & symbol'}), label='New Password')
+    confirm_password = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
+
+    def clean_new_password(self):
+        new_password = self.cleaned_data.get("new_password")
+        if new_password and len(new_password) < 8:
             raise forms.ValidationError("Password must be at least 8 characters long.")
-        if password and not re.search(r'\d', password):
+        if new_password and not re.search(r'\d', new_password):
             raise forms.ValidationError("Password must contain at least one number.")
-        if password and not re.search(r'[^\w\s]', password):
+        if new_password and not re.search(r'[^\w\s]', new_password):
             raise forms.ValidationError("Password must contain at least one symbol.")
-        return password
+        return new_password
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get("password")
+        new_password = cleaned_data.get("new_password")
         confirm_password = cleaned_data.get("confirm_password")
-        if password != confirm_password:
-            self.add_error('confirm_password', "Passwords do not match.")
-            return cleaned_data
-        if self.user and check_password(password, self.user.password):
-            raise forms.ValidationError("New password cannot be the same as the old password.")
+        if new_password and confirm_password and new_password != confirm_password:
+            self.add_error('confirm_password', "Passwords do not match.") 
         return cleaned_data
-
-    def save(self):
-        self.user.password = make_password(self.cleaned_data['password'])
-        self.user.save()

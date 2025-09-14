@@ -7,7 +7,7 @@ services:
     build: .
     # This command OVERRIDES the Gunicorn CMD in the Dockerfile.
     # It starts the Django development server, which has auto-reloading.
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000
     # This volume mounts your local code into the container.
     # When you save a file, it's instantly updated in the container.
     volumes:

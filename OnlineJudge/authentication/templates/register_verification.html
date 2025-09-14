@@ -4,22 +4,22 @@
 {% block title %}Verify OTP - OnlineJudge{% endblock %}
 
 {% block content %}
+
+<!-- Messages Block -->
+{% if messages %}
+<div class="mb-4 max-w-xl text-center mx-auto">
+    {% for message in messages %}
+        <div class="p-4 rounded-lg border text-sm
+            {% if message.tags == 'success' %} bg-green-50/80 text-green-700 border-green-200/60 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800/30 {% endif %}
+            {% if message.tags == 'error' %} bg-red-50/80 text-red-700 border-red-200/60 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800/30 {% endif %}
+            {% if message.tags == 'warning' %} bg-amber-50/80 text-amber-700 border-amber-200/60 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/30 {% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="max-w-md mx-auto">
-
-    <!-- Messages Block -->
-    {% if messages %}
-    <div class="mb-4">
-        {% for message in messages %}
-            <div class="p-4 rounded-md 
-                {% if message.tags == 'success' %} bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 {% endif %}
-                {% if message.tags == 'error' %} bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 {% endif %}
-                {% if message.tags == 'warning' %} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
     <!-- Back Button -->
     <div class="mb-4">
         <a href="{% url 'register' %}" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-300">
@@ -55,11 +55,11 @@
                     Account Details
                 </h3>
                 <div class="grid grid-cols-1 gap-4">
-                    <div class="bg-white/70 dark:bg-gray-800/40 rounded-md p-3 border border-gray-200/30 dark:border-gray-600/20">
+                    <div class="bg-white/70 dark:bg-gray-900/30 rounded-md p-3 border border-gray-200/30 dark:border-gray-600/20">
                         <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Email Address</label>
                         <div class="text-sm text-gray-900 dark:text-white font-medium break-all">{{ email }}</div>
                     </div>
-                    <div class="bg-white/70 dark:bg-gray-800/40 rounded-md p-3 border border-gray-200/30 dark:border-gray-600/20">
+                    <div class="bg-white/70 dark:bg-gray-900/30 rounded-md p-3 border border-gray-200/30 dark:border-gray-600/20">
                         <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1.5 uppercase tracking-wide">Username</label>
                         <div class="text-sm text-gray-900 dark:text-white font-medium">{{ username }}</div>
                     </div>
@@ -73,17 +73,17 @@
                         Verification Code
                         <span class="text-red-500">*</span>
                     </label>
-            <button type="button" id="resend-otp-btn" 
-                data-verify-url="{% url 'verify_registration' %}" 
-                data-email="{{ email }}"
-                class="text-xs font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300 inline-flex items-center" disabled>
+                    <button type="button" id="resend-otp-btn" 
+                        data-verify-url="{% url 'verify_registration' %}" 
+                        data-email="{{ email }}"
+                        class="text-xs font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300 inline-flex items-center" disabled>
                         <span id="resend-label">Resend Code</span><span id="timer" class="ml-1 text-gray-500 dark:text-gray-400"></span>
                     </button>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <input type="text" name="otp" id="id_otp" maxlength="6"
-                            class="block w-32 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 text-center text-lg tracking-widest font-mono"
+                            class="text-sm block w-32 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500 text-center text-lg tracking-widest font-mono"
                             placeholder="000000"
                             autocomplete="one-time-code">
                     </div>
@@ -105,7 +105,7 @@
     </div>
 
     <!-- Help Text -->
-    <div class="mt-6 text-center">
+    <div class="mt-4 text-center">
         <p class="text-xs text-gray-500 dark:text-gray-400">
             Didn't receive the code? Check your spam folder or try resending after 30 seconds.
         </p>

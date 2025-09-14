@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /algop_oj
 
 # Run collectstatic to gather all static files
-RUN python manage.py collectstatic --noinput
+RUN python3 manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000
